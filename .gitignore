@@ -71,3 +71,7 @@ backups/
 # One-time activation codes
 activation_codes/
 *.activation-code
+
+# Hosted (Aiven) credentials and CA certificate: never commit
+*.pem
+.env.aiven
