@@ -1,0 +1,24 @@
+GRANTS G1b == G0b (whole snapshot, CR-normalised): True
+  routine grants: {'cc_v2_dev_routine_definer': 17, 'complaint_app_v2_dev': 10, 'cc_v2_dev_activation_cli': 2}
+  account locks : [('cc_v2_dev_activation_cli', 'Y'), ('cc_v2_dev_routine_definer', 'Y'), ('cc_v2_dev_trigger_definer', 'Y'), ('complaint_app_v2_dev', 'N'), ('complaint_migrator_v2_dev', 'N')]
+snapshot P1b_post_restore_snapshot.json: 22 tables, 17 routines, 4 triggers, 4 views, 9 ledger rows, AI={'complaints': 203, 'complaint_assignments': 257, 'staff_workflow_assignments': 16, 'account_activations': 1}
+TABLES: 22 present: True | differ from P0b: none
+  complaints                   P0b=[202, 2272471601]  P1b=[202, 2272471601]
+  complaint_history            P0b=[155, 864112168]  P1b=[155, 864112168]
+  complaint_assignments        P0b=[200, 3638430215]  P1b=[200, 3638430215]
+  complaint_escalations        P0b=[0, 0]  P1b=[0, 0]
+  resolution_verifications     P0b=[0, 0]  P1b=[0, 0]
+  users                        P0b=[117, 3169617878]  P1b=[117, 3169617878]
+  user_roles                   P0b=[117, 3290168075]  P1b=[117, 3290168075]
+  staff_workflow_assignments   P0b=[15, 2098799082]  P1b=[15, 2098799082]
+  primary_officer_assignment   P0b=[0, 0]  P1b=[0, 0]
+  primary_officer_history      P0b=[0, 0]  P1b=[0, 0]
+  account_activations          P0b=[0, 0]  P1b=[0, 0]
+AUTO_INCREMENT P0b: {'complaints': 203, 'complaint_assignments': 257, 'staff_workflow_assignments': 16, 'account_activations': 1}
+AUTO_INCREMENT P1b: {'complaints': 203, 'complaint_assignments': 257, 'staff_workflow_assignments': 16, 'account_activations': 1}
+routines  == P0b: True (17)
+triggers  == P0b: True (4)
+views     == P0b: True (4)
+ledger    == P0b: True (9)
+ledger all SUCCESS: True
+P1b == P0b (entire snapshot): True

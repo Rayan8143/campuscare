@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}CampusCare{% endblock %} · CampusCare 2.0</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0/dist/css/tabler.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body class="cc-body">
+{% if identity %}
+<div class="page">
+  <aside class="navbar navbar-vertical navbar-expand-lg cc-sidebar" data-bs-theme="dark">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar-menu"
+              aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+      <a href="{{ url_for('main.dashboard') }}" class="navbar-brand cc-brand">
+        <span class="cc-logo"><i data-lucide="shield-check"></i></span>
+        <span>CampusCare<small>2.0</small></span>
+      </a>
+      <div class="collapse navbar-collapse" id="sidebar-menu">
+        <ul class="navbar-nav pt-lg-3">
+          {% set ep = request.endpoint or '' %}
+          <li class="nav-item {{ 'active' if ep == 'main.dashboard' }}"><a class="nav-link" href="{{ url_for('main.dashboard') }}">
+            <span class="nav-link-icon"><i data-lucide="layout-dashboard"></i></span><span class="nav-link-title">Dashboard</span></a></li>
+          <li class="nav-item {{ 'active' if ep.startswith('complaints.') and ep != 'complaints.new' }}"><a class="nav-link" href="{{ url_for('complaints.index') }}">
+            <span class="nav-link-icon"><i data-lucide="inbox"></i></span><span class="nav-link-title">Complaints</span></a></li>
+          {% if (identity.student and identity.can('complaint:submit_student')) or (identity.external and identity.can('complaint:submit_external')) %}
+          <li class="nav-item {{ 'active' if ep == 'complaints.new' }}"><a class="nav-link" href="{{ url_for('complaints.new') }}">
+            <span class="nav-link-icon"><i data-lucide="file-plus-2"></i></span><span class="nav-link-title">New complaint</span></a></li>
+          {% endif %}
+          <li class="nav-item {{ 'active' if ep.startswith('notifications.') }}"><a class="nav-link" href="{{ url_for('notifications.index') }}">
+            <span class="nav-link-icon"><i data-lucide="bell"></i></span><span class="nav-link-title">Notifications</span>
+            {% if unread %}<span class="badge bg-teal text-white ms-auto">{{ unread }}</span>{% endif %}</a></li>
+          {% if identity.is_officer or identity.can('report:view_global') or identity.queue_departments() %}
+          <li class="nav-item {{ 'active' if ep.startswith('reports.') }}"><a class="nav-link" href="{{ url_for('reports.index') }}">
+            <span class="nav-link-icon"><i data-lucide="bar-chart-3"></i></span><span class="nav-link-title">Reports</span></a></li>
+          {% endif %}
+        </ul>
+        <div class="cc-sidebar-foot mt-auto">
+          <div class="cc-user">
+            <span class="avatar avatar-sm cc-avatar">{{ identity.full_name[:1] }}</span>
+            <div class="cc-user-meta"><div class="fw-semibold text-truncate">{{ identity.full_name }}</div>
+              <div class="small text-secondary text-truncate">{{ identity.category_label }}</div></div>
+          </div>
+          <form method="post" action="{{ url_for('auth.logout') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-ghost-light w-100 mt-2"><i data-lucide="log-out" class="me-2"></i>Sign out</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="page-wrapper">
+    <div class="page-header d-print-none">
+      <div class="container-xl">
+        <div class="row g-2 align-items-center">
+          <div class="col">
+            <div class="page-pretitle">{% block pretitle %}{{ identity.category_label }}{% endblock %}</div>
+            <h2 class="page-title">{% block heading %}{% endblock %}</h2>
+          </div>
+          <div class="col-auto ms-auto">{% block actions %}{% endblock %}</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-body">
+      <div class="container-xl">
+        {% include "partials/flash.html" %}
+        {% block content %}{% endblock %}
+      </div>
+    </div>
+  </div>
+</div>
+{% else %}
+  {% block bare %}{% endblock %}
+{% endif %}
+<script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0/dist/js/tabler.min.js"></script>
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<script>window.lucide && lucide.createIcons();</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

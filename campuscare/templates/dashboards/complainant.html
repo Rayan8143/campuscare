@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import stat, complaint_table, activity with context %}
+{% block title %}Dashboard{% endblock %}
+{% block heading %}Welcome back, {{ identity.full_name.split(' ')[0] }}{% endblock %}
+{% block content %}
+<div class="cc-hero mb-4">
+  <div class="row align-items-center g-3" style="position:relative;z-index:1">
+    <div class="col-md">
+      <span class="cc-pill mb-2"><i data-lucide="{{ 'graduation-cap' if category == 'student' else 'building-2' }}" style="width:14px"></i>
+        {% if category == 'student' %}{{ identity.student.academic_department or 'Student' }}{% else %}{{ identity.external.affiliation_type|title }}{% if identity.external.organization_name %} · {{ identity.external.organization_name }}{% endif %}{% endif %}</span>
+      <h3 class="mb-1">Have something that needs fixing?</h3>
+      <div class="small">Raise a complaint and follow every step as it moves through review.</div>
+    </div>
+    <div class="col-md-auto"><a class="btn btn-light" href="{{ url_for('complaints.new') }}"><i data-lucide="plus" class="me-2"></i>New complaint</a></div>
+  </div>
+</div>
+<div class="row g-3 mb-4">
+  {# Mutually exclusive metrics: Total = Active + Resolved + Rejected #}
+  {% set active = counts['Submitted'] + counts['In Progress'] + counts['Escalated'] + counts['Resolution Pending Verification'] %}
+  {% set parts = [] %}
+  {% for key, label in [('Submitted','submitted'), ('In Progress','in progress'), ('Escalated','escalated'), ('Resolution Pending Verification','pending verification')] if counts[key] %}{% set _ = parts.append(counts[key] ~ ' ' ~ label) %}{% endfor %}
+  {{ stat('Total complaints', active + counts['Resolved'] + counts['Rejected'], 'files', 'blue') }}
+  {{ stat('Active complaints', active, 'clock', 'azure', hint=(parts|join(' · ')) if parts else 'none active') }}
+  {{ stat('Resolved', counts['Resolved'], 'check-circle-2', 'green') }}
+  {{ stat('Rejected', counts['Rejected'], 'x-circle', 'red') }}
+</div>
+<div class="row g-3">
+  <div class="col-lg-8"><div class="card cc-card">
+    <div class="card-header"><h3 class="card-title">My recent complaints</h3>
+      <div class="card-actions"><a href="{{ url_for('complaints.index', scope='own') }}" class="btn btn-sm btn-ghost-primary">View all</a></div></div>
+    {{ complaint_table(recent, show_assignee=False, empty="You haven't raised any complaints yet.") }}
+  </div></div>
+  <div class="col-lg-4"><div class="card cc-card h-100">
+    <div class="card-header"><h3 class="card-title">Latest updates</h3></div>
+    <div class="card-body">{{ activity(feed) }}</div>
+  </div></div>
+</div>
+{% endblock %}

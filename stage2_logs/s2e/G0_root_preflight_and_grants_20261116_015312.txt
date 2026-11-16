@@ -1,0 +1,225 @@
++-----------------+----------------+
+| section         | value          |
++-----------------+----------------+
+| R1 CURRENT_USER | root@localhost |
++-----------------+----------------+
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Grants for root@localhost                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, RELOAD, SHUTDOWN, PROCESS, FILE, REFERENCES, INDEX, ALTER, SHOW DATABASES, SUPER, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE, REPLICATION SLAVE, REPLICATION CLIENT, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, CREATE USER, EVENT, TRIGGER, CREATE TABLESPACE, CREATE ROLE, DROP ROLE ON *.* TO `root`@`localhost` WITH GRANT OPTION                                                                                                                                                                                                                                                                                                                                                                                     |
+| GRANT APPLICATION_PASSWORD_ADMIN,AUDIT_ABORT_EXEMPT,AUDIT_ADMIN,AUTHENTICATION_POLICY_ADMIN,BACKUP_ADMIN,BINLOG_ADMIN,BINLOG_ENCRYPTION_ADMIN,CLONE_ADMIN,CONNECTION_ADMIN,ENCRYPTION_KEY_ADMIN,FIREWALL_EXEMPT,FLUSH_OPTIMIZER_COSTS,FLUSH_STATUS,FLUSH_TABLES,FLUSH_USER_RESOURCES,GROUP_REPLICATION_ADMIN,GROUP_REPLICATION_STREAM,INNODB_REDO_LOG_ARCHIVE,INNODB_REDO_LOG_ENABLE,PASSWORDLESS_USER_ADMIN,PERSIST_RO_VARIABLES_ADMIN,REPLICATION_APPLIER,REPLICATION_SLAVE_ADMIN,RESOURCE_GROUP_ADMIN,RESOURCE_GROUP_USER,ROLE_ADMIN,SENSITIVE_VARIABLES_OBSERVER,SERVICE_CONNECTION_ADMIN,SESSION_VARIABLES_ADMIN,SET_USER_ID,SHOW_ROUTINE,SYSTEM_USER,SYSTEM_VARIABLES_ADMIN,TABLE_ENCRYPTION_ADMIN,TELEMETRY_LOG_ADMIN,XA_RECOVER_ADMIN ON *.* TO `root`@`localhost` WITH GRANT OPTION |
+| GRANT PROXY ON ``@`` TO `root`@`localhost` WITH GRANT OPTION                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
++--------------------------------------------------------+
+| section                                                |
++--------------------------------------------------------+
+| R2 current user dynamic privileges relevant to DEFINER |
++--------------------------------------------------------+
++-------------+
+| PRIV        |
++-------------+
+| SET_USER_ID |
+| SYSTEM_USER |
++-------------+
++------------------------------------------------------------------------+
+| section                                                                |
++------------------------------------------------------------------------+
+| R3 DEFINER accounts of triggers/views/routines and whether each exists |
++------------------------------------------------------------------------+
++---------+----------------------------------------+-------------------------------------+----------------+
+| kind    | object_name                            | DEFINER                             | definer_exists |
++---------+----------------------------------------+-------------------------------------+----------------+
+| ROUTINE | cc_auth_department_authority           | cc_v2_dev_routine_definer@localhost |              1 |
+| ROUTINE | cc_auth_has_permission                 | cc_v2_dev_routine_definer@localhost |              1 |
+| ROUTINE | cc_auth_is_assigned_staff              | cc_v2_dev_routine_definer@localhost |              1 |
+| ROUTINE | cc_auth_is_primary_officer             | cc_v2_dev_routine_definer@localhost |              1 |
+| ROUTINE | cc_auth_staff_eligible                 | cc_v2_dev_routine_definer@localhost |              1 |
+| ROUTINE | cc_token_issue_core                    | cc_v2_dev_routine_definer@localhost |              1 |
+| ROUTINE | escalate_complaint                     | cc_v2_dev_routine_definer@localhost |              1 |
+| ROUTINE | issue_account_token                    | cc_v2_dev_routine_definer@localhost |              1 |
+| ROUTINE | issue_account_token_operator           | cc_v2_dev_routine_definer@localhost |              1 |
+| ROUTINE | reassign_complaint                     | cc_v2_dev_routine_definer@localhost |              1 |
+| ROUTINE | redeem_account_token                   | cc_v2_dev_routine_definer@localhost |              1 |
+| ROUTINE | request_escalation                     | cc_v2_dev_routine_definer@localhost |              1 |
+| ROUTINE | soft_delete_complaint                  | cc_v2_dev_routine_definer@localhost |              1 |
+| ROUTINE | submit_complaint                       | cc_v2_dev_routine_definer@localhost |              1 |
+| ROUTINE | transfer_primary_officer               | cc_v2_dev_routine_definer@localhost |              1 |
+| ROUTINE | transition_complaint_status            | cc_v2_dev_routine_definer@localhost |              1 |
+| ROUTINE | update_complaint_details               | cc_v2_dev_routine_definer@localhost |              1 |
+| TRIGGER | trg_complaint_status_history           | cc_v2_dev_trigger_definer@localhost |              1 |
+| TRIGGER | trg_guard_complaint_sensitive_update   | cc_v2_dev_trigger_definer@localhost |              1 |
+| TRIGGER | trg_validate_complaint_identity_insert | cc_v2_dev_trigger_definer@localhost |              1 |
+| TRIGGER | trg_validate_complaint_identity_update | cc_v2_dev_trigger_definer@localhost |              1 |
+| VIEW    | complaint_details                      | complaint_migrator_v2_dev@localhost |              1 |
+| VIEW    | department_complaint_summary           | complaint_migrator_v2_dev@localhost |              1 |
+| VIEW    | open_complaints                        | complaint_migrator_v2_dev@localhost |              1 |
+| VIEW    | pending_complaints                     | complaint_migrator_v2_dev@localhost |              1 |
++---------+----------------------------------------+-------------------------------------+----------------+
++----------------------------------------------------------------------------------+
+| section                                                                          |
++----------------------------------------------------------------------------------+
+| R4 SYSTEM_USER held by any DEFINER account (if yes, root also needs SYSTEM_USER) |
++----------------------------------------------------------------------------------+
++-------------------------------------+
+| section                             |
++-------------------------------------+
+| G1 SHOW GRANTS complaint_app_v2_dev |
++-------------------------------------+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Grants for complaint_app_v2_dev@localhost                                                                                                                                     |
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| GRANT USAGE ON *.* TO `complaint_app_v2_dev`@`localhost`                                                                                                                      |
+| GRANT SELECT ON `college_complaints_v2_dev`.`academic_departments` TO `complaint_app_v2_dev`@`localhost`                                                                      |
+| GRANT SELECT ON `college_complaints_v2_dev`.`complaint_assignments` TO `complaint_app_v2_dev`@`localhost`                                                                     |
+| GRANT SELECT ON `college_complaints_v2_dev`.`complaint_details` TO `complaint_app_v2_dev`@`localhost`                                                                         |
+| GRANT SELECT ON `college_complaints_v2_dev`.`complaint_escalations` TO `complaint_app_v2_dev`@`localhost`                                                                     |
+| GRANT SELECT ON `college_complaints_v2_dev`.`complaint_history` TO `complaint_app_v2_dev`@`localhost`                                                                         |
+| GRANT SELECT ON `college_complaints_v2_dev`.`complaints` TO `complaint_app_v2_dev`@`localhost`                                                                                |
+| GRANT SELECT ON `college_complaints_v2_dev`.`department_complaint_summary` TO `complaint_app_v2_dev`@`localhost`                                                              |
+| GRANT SELECT ON `college_complaints_v2_dev`.`departments` TO `complaint_app_v2_dev`@`localhost`                                                                               |
+| GRANT SELECT ON `college_complaints_v2_dev`.`external_complainants` TO `complaint_app_v2_dev`@`localhost`                                                                     |
+| GRANT SELECT, INSERT (`complaint_id`, `message`, `title`, `user_id`), UPDATE (`is_read`) ON `college_complaints_v2_dev`.`notifications` TO `complaint_app_v2_dev`@`localhost` |
+| GRANT SELECT ON `college_complaints_v2_dev`.`open_complaints` TO `complaint_app_v2_dev`@`localhost`                                                                           |
+| GRANT SELECT ON `college_complaints_v2_dev`.`pending_complaints` TO `complaint_app_v2_dev`@`localhost`                                                                        |
+| GRANT SELECT ON `college_complaints_v2_dev`.`permissions` TO `complaint_app_v2_dev`@`localhost`                                                                               |
+| GRANT SELECT ON `college_complaints_v2_dev`.`primary_officer_assignment` TO `complaint_app_v2_dev`@`localhost`                                                                |
+| GRANT SELECT ON `college_complaints_v2_dev`.`primary_officer_history` TO `complaint_app_v2_dev`@`localhost`                                                                   |
+| GRANT SELECT ON `college_complaints_v2_dev`.`resolution_verifications` TO `complaint_app_v2_dev`@`localhost`                                                                  |
+| GRANT SELECT ON `college_complaints_v2_dev`.`role_permissions` TO `complaint_app_v2_dev`@`localhost`                                                                          |
+| GRANT SELECT ON `college_complaints_v2_dev`.`roles` TO `complaint_app_v2_dev`@`localhost`                                                                                     |
+| GRANT SELECT ON `college_complaints_v2_dev`.`staff_workflow_assignments` TO `complaint_app_v2_dev`@`localhost`                                                                |
+| GRANT SELECT ON `college_complaints_v2_dev`.`staff` TO `complaint_app_v2_dev`@`localhost`                                                                                     |
+| GRANT SELECT ON `college_complaints_v2_dev`.`students` TO `complaint_app_v2_dev`@`localhost`                                                                                  |
+| GRANT SELECT ON `college_complaints_v2_dev`.`user_roles` TO `complaint_app_v2_dev`@`localhost`                                                                                |
+| GRANT SELECT ON `college_complaints_v2_dev`.`users` TO `complaint_app_v2_dev`@`localhost`                                                                                     |
+| GRANT SELECT ON `college_complaints_v2_dev`.`workflow_levels` TO `complaint_app_v2_dev`@`localhost`                                                                           |
+| GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`escalate_complaint` TO `complaint_app_v2_dev`@`localhost`                                                             |
+| GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`issue_account_token` TO `complaint_app_v2_dev`@`localhost`                                                            |
+| GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`reassign_complaint` TO `complaint_app_v2_dev`@`localhost`                                                             |
+| GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`redeem_account_token` TO `complaint_app_v2_dev`@`localhost`                                                           |
+| GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`request_escalation` TO `complaint_app_v2_dev`@`localhost`                                                             |
+| GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`soft_delete_complaint` TO `complaint_app_v2_dev`@`localhost`                                                          |
+| GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`submit_complaint` TO `complaint_app_v2_dev`@`localhost`                                                               |
+| GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`transfer_primary_officer` TO `complaint_app_v2_dev`@`localhost`                                                       |
+| GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`transition_complaint_status` TO `complaint_app_v2_dev`@`localhost`                                                    |
+| GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`update_complaint_details` TO `complaint_app_v2_dev`@`localhost`                                                       |
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
++------------------------------------------+
+| section                                  |
++------------------------------------------+
+| G2 SHOW GRANTS complaint_migrator_v2_dev |
++------------------------------------------+
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Grants for complaint_migrator_v2_dev@localhost                                                                                                                                                                            |
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| GRANT USAGE ON *.* TO `complaint_migrator_v2_dev`@`localhost`                                                                                                                                                             |
+| GRANT SELECT, INSERT, UPDATE, CREATE, DROP, REFERENCES, INDEX, ALTER, EXECUTE, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, TRIGGER ON `college_complaints_v2_dev`.* TO `complaint_migrator_v2_dev`@`localhost` |
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
++------------------------------------------+
+| section                                  |
++------------------------------------------+
+| G3 SHOW GRANTS cc_v2_dev_routine_definer |
++------------------------------------------+
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Grants for cc_v2_dev_routine_definer@localhost                                                                                                                                                                                                                                                                                                                                                                                  |
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| GRANT USAGE ON *.* TO `cc_v2_dev_routine_definer`@`localhost`                                                                                                                                                                                                                                                                                                                                                                   |
+| GRANT LOCK TABLES ON `college_complaints_v2_dev`.* TO `cc_v2_dev_routine_definer`@`localhost`                                                                                                                                                                                                                                                                                                                                   |
+| GRANT SELECT, INSERT, UPDATE (`revoked_at`, `used_at`) ON `college_complaints_v2_dev`.`account_activations` TO `cc_v2_dev_routine_definer`@`localhost`                                                                                                                                                                                                                                                                          |
+| GRANT SELECT, INSERT, UPDATE (`is_active`, `unassigned_at`, `unassigned_by_user_id`) ON `college_complaints_v2_dev`.`complaint_assignments` TO `cc_v2_dev_routine_definer`@`localhost`                                                                                                                                                                                                                                          |
+| GRANT INSERT ON `college_complaints_v2_dev`.`complaint_escalations` TO `cc_v2_dev_routine_definer`@`localhost`                                                                                                                                                                                                                                                                                                                  |
+| GRANT INSERT ON `college_complaints_v2_dev`.`complaint_history` TO `cc_v2_dev_routine_definer`@`localhost`                                                                                                                                                                                                                                                                                                                      |
+| GRANT SELECT, INSERT (`category`, `complainant_user_id`, `department_id`, `description`, `external_id`, `priority`, `student_id`, `title`), UPDATE (`assigned_staff_id`, `category`, `current_level_id`, `deleted_at`, `deleted_by_user_id`, `department_id`, `description`, `is_deleted`, `priority`, `resolved_at`, `status`, `title`) ON `college_complaints_v2_dev`.`complaints` TO `cc_v2_dev_routine_definer`@`localhost` |
+| GRANT SELECT ON `college_complaints_v2_dev`.`departments` TO `cc_v2_dev_routine_definer`@`localhost`                                                                                                                                                                                                                                                                                                                            |
+| GRANT SELECT ON `college_complaints_v2_dev`.`external_complainants` TO `cc_v2_dev_routine_definer`@`localhost`                                                                                                                                                                                                                                                                                                                  |
+| GRANT SELECT ON `college_complaints_v2_dev`.`permissions` TO `cc_v2_dev_routine_definer`@`localhost`                                                                                                                                                                                                                                                                                                                            |
+| GRANT SELECT, INSERT, UPDATE (`assigned_at`, `assigned_by_user_id`, `previous_officer_user_id`, `transition_reason`, `user_id`) ON `college_complaints_v2_dev`.`primary_officer_assignment` TO `cc_v2_dev_routine_definer`@`localhost`                                                                                                                                                                                          |
+| GRANT INSERT ON `college_complaints_v2_dev`.`primary_officer_history` TO `cc_v2_dev_routine_definer`@`localhost`                                                                                                                                                                                                                                                                                                                |
+| GRANT SELECT, INSERT, UPDATE (`decision`, `officer_remarks`, `officer_user_id`, `reviewed_at`) ON `college_complaints_v2_dev`.`resolution_verifications` TO `cc_v2_dev_routine_definer`@`localhost`                                                                                                                                                                                                                             |
+| GRANT SELECT ON `college_complaints_v2_dev`.`role_permissions` TO `cc_v2_dev_routine_definer`@`localhost`                                                                                                                                                                                                                                                                                                                       |
+| GRANT SELECT ON `college_complaints_v2_dev`.`roles` TO `cc_v2_dev_routine_definer`@`localhost`                                                                                                                                                                                                                                                                                                                                  |
+| GRANT SELECT ON `college_complaints_v2_dev`.`staff_workflow_assignments` TO `cc_v2_dev_routine_definer`@`localhost`                                                                                                                                                                                                                                                                                                             |
+| GRANT SELECT ON `college_complaints_v2_dev`.`staff` TO `cc_v2_dev_routine_definer`@`localhost`                                                                                                                                                                                                                                                                                                                                  |
+| GRANT SELECT ON `college_complaints_v2_dev`.`students` TO `cc_v2_dev_routine_definer`@`localhost`                                                                                                                                                                                                                                                                                                                               |
+| GRANT SELECT, INSERT, UPDATE (`assigned_at`, `is_active`) ON `college_complaints_v2_dev`.`user_roles` TO `cc_v2_dev_routine_definer`@`localhost`                                                                                                                                                                                                                                                                                |
+| GRANT SELECT, UPDATE (`is_active`, `password_hash`) ON `college_complaints_v2_dev`.`users` TO `cc_v2_dev_routine_definer`@`localhost`                                                                                                                                                                                                                                                                                           |
+| GRANT SELECT ON `college_complaints_v2_dev`.`workflow_levels` TO `cc_v2_dev_routine_definer`@`localhost`                                                                                                                                                                                                                                                                                                                        |
+| GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`cc_auth_department_authority` TO `cc_v2_dev_routine_definer`@`localhost`                                                                                                                                                                                                                                                                                                |
+| GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`cc_auth_has_permission` TO `cc_v2_dev_routine_definer`@`localhost`                                                                                                                                                                                                                                                                                                      |
+| GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`cc_auth_is_assigned_staff` TO `cc_v2_dev_routine_definer`@`localhost`                                                                                                                                                                                                                                                                                                   |
+| GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`cc_auth_is_primary_officer` TO `cc_v2_dev_routine_definer`@`localhost`                                                                                                                                                                                                                                                                                                  |
+| GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`cc_auth_staff_eligible` TO `cc_v2_dev_routine_definer`@`localhost`                                                                                                                                                                                                                                                                                                      |
+| GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`cc_token_issue_core` TO `cc_v2_dev_routine_definer`@`localhost`                                                                                                                                                                                                                                                                                                         |
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
++------------------------------------------+
+| section                                  |
++------------------------------------------+
+| G4 SHOW GRANTS cc_v2_dev_trigger_definer |
++------------------------------------------+
++----------------------------------------------------------------------------------------------------------------+
+| Grants for cc_v2_dev_trigger_definer@localhost                                                                 |
++----------------------------------------------------------------------------------------------------------------+
+| GRANT USAGE ON *.* TO `cc_v2_dev_trigger_definer`@`localhost`                                                  |
+| GRANT SELECT ON `college_complaints_v2_dev`.`complaint_assignments` TO `cc_v2_dev_trigger_definer`@`localhost` |
+| GRANT SELECT ON `college_complaints_v2_dev`.`complaint_escalations` TO `cc_v2_dev_trigger_definer`@`localhost` |
+| GRANT INSERT ON `college_complaints_v2_dev`.`complaint_history` TO `cc_v2_dev_trigger_definer`@`localhost`     |
+| GRANT SELECT, TRIGGER ON `college_complaints_v2_dev`.`complaints` TO `cc_v2_dev_trigger_definer`@`localhost`   |
+| GRANT SELECT ON `college_complaints_v2_dev`.`external_complainants` TO `cc_v2_dev_trigger_definer`@`localhost` |
+| GRANT SELECT ON `college_complaints_v2_dev`.`students` TO `cc_v2_dev_trigger_definer`@`localhost`              |
++----------------------------------------------------------------------------------------------------------------+
++-----------------------------------------+
+| section                                 |
++-----------------------------------------+
+| G5 SHOW GRANTS cc_v2_dev_activation_cli |
++-----------------------------------------+
++----------------------------------------------------------------------------------------------------------------------------------------------+
+| Grants for cc_v2_dev_activation_cli@localhost                                                                                                |
++----------------------------------------------------------------------------------------------------------------------------------------------+
+| GRANT USAGE ON *.* TO `cc_v2_dev_activation_cli`@`localhost`                                                                                 |
+| GRANT SELECT ON `college_complaints_v2_dev`.`roles` TO `cc_v2_dev_activation_cli`@`localhost`                                                |
+| GRANT SELECT ON `college_complaints_v2_dev`.`user_roles` TO `cc_v2_dev_activation_cli`@`localhost`                                           |
+| GRANT SELECT (`email`, `full_name`, `is_active`, `user_id`) ON `college_complaints_v2_dev`.`users` TO `cc_v2_dev_activation_cli`@`localhost` |
+| GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`issue_account_token_operator` TO `cc_v2_dev_activation_cli`@`localhost`              |
+| GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`redeem_account_token` TO `cc_v2_dev_activation_cli`@`localhost`                      |
++----------------------------------------------------------------------------------------------------------------------------------------------+
++-------------------------------------------------------------------+
+| section                                                           |
++-------------------------------------------------------------------+
+| G6 routine-level grant rows (mysql.procs_priv) for the dev schema |
++-------------------------------------------------------------------+
++---------------------------+------------------------------+--------------+-----------+
+| User                      | Routine_name                 | Routine_type | Proc_priv |
++---------------------------+------------------------------+--------------+-----------+
+| cc_v2_dev_activation_cli  | issue_account_token_operator | PROCEDURE    | Execute   |
+| cc_v2_dev_activation_cli  | redeem_account_token         | PROCEDURE    | Execute   |
+| cc_v2_dev_routine_definer | cc_auth_department_authority | PROCEDURE    | Execute   |
+| cc_v2_dev_routine_definer | cc_auth_has_permission       | PROCEDURE    | Execute   |
+| cc_v2_dev_routine_definer | cc_auth_is_assigned_staff    | PROCEDURE    | Execute   |
+| cc_v2_dev_routine_definer | cc_auth_is_primary_officer   | PROCEDURE    | Execute   |
+| cc_v2_dev_routine_definer | cc_auth_staff_eligible       | PROCEDURE    | Execute   |
+| cc_v2_dev_routine_definer | cc_token_issue_core          | PROCEDURE    | Execute   |
+| complaint_app_v2_dev      | escalate_complaint           | PROCEDURE    | Execute   |
+| complaint_app_v2_dev      | issue_account_token          | PROCEDURE    | Execute   |
+| complaint_app_v2_dev      | reassign_complaint           | PROCEDURE    | Execute   |
+| complaint_app_v2_dev      | redeem_account_token         | PROCEDURE    | Execute   |
+| complaint_app_v2_dev      | request_escalation           | PROCEDURE    | Execute   |
+| complaint_app_v2_dev      | soft_delete_complaint        | PROCEDURE    | Execute   |
+| complaint_app_v2_dev      | submit_complaint             | PROCEDURE    | Execute   |
+| complaint_app_v2_dev      | transfer_primary_officer     | PROCEDURE    | Execute   |
+| complaint_app_v2_dev      | transition_complaint_status  | PROCEDURE    | Execute   |
+| complaint_app_v2_dev      | update_complaint_details     | PROCEDURE    | Execute   |
++---------------------------+------------------------------+--------------+-----------+
++-----------------------+
+| section               |
++-----------------------+
+| G7 account lock state |
++-----------------------+
++---------------------------+-----------+----------------+
+| user                      | host      | account_locked |
++---------------------------+-----------+----------------+
+| cc_v2_dev_activation_cli  | localhost | Y              |
+| cc_v2_dev_routine_definer | localhost | Y              |
+| cc_v2_dev_trigger_definer | localhost | Y              |
+| complaint_app_v2_dev      | localhost | N              |
+| complaint_migrator_v2_dev | localhost | N              |
++---------------------------+-----------+----------------+

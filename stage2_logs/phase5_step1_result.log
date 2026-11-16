@@ -1,0 +1,10 @@
+Phase 5 Step 1 - history-trigger probe (root, one transaction, ROLLED BACK) - 2026-11-16
+Trigger condition: AFTER UPDATE ON complaints, IF NOT (OLD.status <=> NEW.status) -> one INSERT into complaint_history
+BEFORE   : complaint 2 = Submitted, staff 5, level 1, resolved_at NULL, deleted 0, complainant 2; history_for_2=0, total=155
+           CHECKSUM complaints=2272471601 complaint_history=864112168
+UPDATE   : status Submitted -> In Progress, rows_updated=1
+INSIDE   : history_for_2=1, total=156; row = (2, Submitted, In Progress, NULL, S2_TRIGGER_PROBE, 'Phase 5 trigger probe - rolled back')
+ROLLBACK : complaint 2 = Submitted (identical row); history_for_2=0, total=155
+           CHECKSUM complaints=2272471601 complaint_history=864112168 (identical)
+RESULT   : PASS - exactly one history row per status transition; rollback verified.
+Note     : InnoDB AUTO_INCREMENT of complaint_history may have advanced by 1 (not row data).

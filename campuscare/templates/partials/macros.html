@@ -1,0 +1,59 @@
+{% macro status_badge(s) -%}
+<span class="badge bg-{{ STATUS_BADGES.get(s, 'secondary') }}-lt cc-badge">{{ 'Pending verification' if s == 'Resolution Pending Verification' else s }}</span>
+{%- endmacro %}
+
+{% macro priority_badge(p) -%}
+<span class="badge bg-{{ PRIORITY_BADGES.get(p, 'secondary') }}-lt cc-badge"><span class="cc-dot bg-{{ PRIORITY_BADGES.get(p,'secondary') }}"></span>{{ p }}</span>
+{%- endmacro %}
+
+{% macro stat(label, value, icon, tone='blue', hint=None) -%}
+<div class="col-sm-6 col-xl-3">
+  <div class="card cc-card cc-stat">
+    <div class="card-body d-flex align-items-center">
+      <span class="cc-stat-icon bg-{{ tone }}-lt text-{{ tone }}"><i data-lucide="{{ icon }}"></i></span>
+      <div class="ms-3"><div class="cc-stat-value">{{ value }}</div><div class="text-secondary small">{{ label }}</div>
+      {% if hint %}<div class="small text-muted">{{ hint }}</div>{% endif %}</div>
+    </div>
+  </div>
+</div>
+{%- endmacro %}
+
+{% macro complaint_table(rows, show_dept=True, show_assignee=True, empty='Nothing here yet.') -%}
+{% if rows %}
+<div class="table-responsive">
+<table class="table table-vcenter card-table cc-table">
+  <thead><tr><th>#</th><th>Complaint</th>{% if show_dept %}<th>Department</th>{% endif %}<th>Level</th><th>Priority</th><th>Status</th>{% if show_assignee %}<th>Assignee</th>{% endif %}<th>Filed</th></tr></thead>
+  <tbody>
+  {% for c in rows %}
+  <tr class="cc-row" onclick="location.href='{{ url_for('complaints.detail', cid=c.complaint_id) }}'">
+    <td class="text-secondary">{{ c.complaint_id }}</td>
+    <td><a href="{{ url_for('complaints.detail', cid=c.complaint_id) }}" class="text-reset fw-medium">{{ c.title }}</a>
+        <div class="small text-secondary">{{ c.category }}</div></td>
+    {% if show_dept %}<td>{{ c.responsible_department }}</td>{% endif %}
+    <td><span class="small">{{ c.current_level_name }}</span></td>
+    <td>{{ priority_badge(c.priority) }}</td>
+    <td>{{ status_badge(c.status) }}</td>
+    {% if show_assignee %}<td>{{ c.assigned_staff_name or '<span class="text-warning small">Unassigned</span>'|safe }}</td>{% endif %}
+    <td class="text-secondary small">{{ c.created_at|dt('%d %b %Y') }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% else %}
+<div class="empty py-4"><div class="empty-icon"><i data-lucide="inbox"></i></div><p class="empty-subtitle text-secondary">{{ empty }}</p></div>
+{% endif %}
+{%- endmacro %}
+
+{% macro activity(rows) -%}
+{% if rows %}
+<ul class="cc-activity">
+{% for a in rows %}
+  <li><span class="cc-activity-dot"></span>
+    <div><a href="{{ url_for('complaints.detail', cid=a.complaint_id) }}" class="fw-medium text-reset">#{{ a.complaint_id }} {{ a.title|truncate(48) }}</a>
+    <div class="small text-secondary">{{ a.action_type|replace('_',' ')|title }} → {{ a.new_status }}{% if a.actor_name %} · {{ a.actor_name }}{% endif %}</div>
+    <div class="small text-muted">{{ a.changed_at|dt }}</div></div></li>
+{% endfor %}
+</ul>
+{% else %}<p class="text-secondary mb-0">No recent activity.</p>{% endif %}
+{%- endmacro %}

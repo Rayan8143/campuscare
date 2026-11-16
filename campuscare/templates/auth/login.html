@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Sign in{% endblock %}
+{% block bare %}
+<div class="cc-auth">
+  <div class="cc-auth-side">
+    <div class="cc-brand"><span class="cc-logo"><i data-lucide="shield-check"></i></span><span>CampusCare<small>2.0</small></span></div>
+    <div style="position:relative;z-index:1;max-width:460px">
+      <h1 class="display-6 fw-bold mb-3">Every campus concern, tracked to resolution.</h1>
+      <p class="mb-4" style="opacity:.8">A transparent, multi-level grievance workflow for students, staff and departments.</p>
+      <div class="cc-feature"><i data-lucide="git-branch"></i><div>Four-level review: staff, department reviewer, department head and the Primary Complaint Officer.</div></div>
+      <div class="cc-feature"><i data-lucide="badge-check"></i><div>Independent verification. No one approves their own resolution.</div></div>
+      <div class="cc-feature"><i data-lucide="history"></i><div>A full, tamper-resistant timeline of every action.</div></div>
+    </div>
+    <div class="small" style="opacity:.6">Development sandbox · college_complaints_v2_dev</div>
+  </div>
+  <div class="cc-auth-main">
+    <div class="cc-auth-card">
+      <h2 class="mb-1">Sign in</h2>
+      <p class="text-secondary mb-4">Use your institutional username or email.</p>
+      {% include "partials/flash.html" %}
+      <form method="post" autocomplete="on" class="card cc-card"><div class="card-body p-4">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="mb-3"><label class="form-label" for="u">Username or email</label>
+          <input id="u" class="form-control" name="username" value="{{ username }}" required maxlength="100" autofocus autocomplete="username"></div>
+        <div class="mb-3"><label class="form-label" for="p">Password</label>
+          <input id="p" type="password" class="form-control" name="password" required autocomplete="current-password"></div>
+        <button class="btn btn-primary w-100"><i data-lucide="log-in" class="me-2"></i>Sign in</button>
+      </div></form>
+      <p class="text-secondary small mt-3 text-center">First time here or reset requested? <a href="{{ url_for('auth.activate') }}">Activate with your one-time code</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

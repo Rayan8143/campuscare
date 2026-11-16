@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}New complaint{% endblock %}
+{% block heading %}Raise a complaint{% endblock %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-lg-8">
+    <form method="post" class="card cc-card"><div class="card-body">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="mb-3"><label class="form-label required">Title</label>
+        <input class="form-control" name="title" maxlength="180" required value="{{ form.get('title','') }}" placeholder="Short summary, e.g. Wi-Fi down in Hostel B"></div>
+      <div class="row g-3 mb-3">
+        <div class="col-md-6"><label class="form-label required">Responsible department</label>
+          <select class="form-select" name="department_id" required><option value="">Choose…</option>
+          {% for d in departments %}<option value="{{ d.department_id }}" {{ 'selected' if form.get('department_id')==d.department_id|string }}>{{ d.department_name }}</option>{% endfor %}</select></div>
+        <div class="col-md-3"><label class="form-label required">Category</label>
+          <select class="form-select" name="category" required>{% for c in categories %}<option {{ 'selected' if form.get('category')==c }}>{{ c }}</option>{% endfor %}</select></div>
+        <div class="col-md-3"><label class="form-label required">Priority</label>
+          <select class="form-select" name="priority" required>{% for p in priorities %}<option {{ 'selected' if form.get('priority', 'Medium')==p }}>{{ p }}</option>{% endfor %}</select></div>
+      </div>
+      <div class="mb-3"><label class="form-label required">Description</label>
+        <textarea class="form-control" name="description" rows="7" maxlength="5000" required placeholder="What happened, where, and since when?">{{ form.get('description','') }}</textarea></div>
+      <button class="btn btn-primary"><i data-lucide="send" class="me-2"></i>Submit complaint</button>
+    </div></form>
+  </div>
+  <div class="col-lg-4"><div class="card cc-card cc-glass"><div class="card-body">
+    <h3 class="card-title">What happens next</h3>
+    <ol class="text-secondary small ps-3 mb-0">
+      <li class="mb-2">The department reviewer assigns your complaint to Level 1 staff.</li>
+      <li class="mb-2">Staff accept and investigate. Complex issues can be escalated to the department head or the Primary Complaint Officer.</li>
+      <li class="mb-2">Proposed resolutions are independently verified before closing.</li>
+      <li>You get a notification at every step. You can edit details while the complaint is still <em>Submitted</em>.</li>
+    </ol></div></div>
+    <div class="card cc-card mt-3"><div class="card-body small text-secondary">
+      {% for d in departments %}<div class="mb-1"><b class="text-body">{{ d.department_name }}</b>{% if d.description %} — {{ d.description }}{% endif %}</div>{% endfor %}</div></div>
+  </div>
+</div>
+{% endblock %}

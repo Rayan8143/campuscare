@@ -1,0 +1,31 @@
+
+FULL ARCHIVE: backups/stage2/admin_post_stage2_full_20261116_113029.sql
+  238509 bytes  sha256 fb1c2e5027d09ecbc99019a4d29946b0844db789628ce529702df56140598d9d
+  OK   sha256 recomputed == prep output
+  OK   ends with '-- Dump completed'
+  OK   header: Database: college_complaints_v2_dev
+  OK   no USE / no CREATE DATABASE
+  OK   no `college_complaints` reference
+  OK   22 tables == P0b
+  OK   4 triggers == P0b (trigger definer)
+  OK   4 views == P0b (INVOKER)
+  OK   row counts == P0b (22 tables)
+  OK   17 stored routines
+
+RESTORE IMAGE: backups/stage2/admin_post_stage2_restoreimage_20261116_113029.sql
+  167081 bytes  sha256 4b67ee5aa3e41b2ad2468cc552fb0e46323d1f00f7f838cb718564f0f4d633ff
+  OK   sha256 recomputed == prep output
+  OK   ends with '-- Dump completed'
+  OK   header: Database: college_complaints_v2_dev
+  OK   no USE / no CREATE DATABASE
+  OK   no `college_complaints` reference
+  OK   22 tables == P0b
+  OK   4 triggers == P0b (trigger definer)
+  OK   4 views == P0b (INVOKER)
+  OK   row counts == P0b (22 tables)
+  OK   0 stored routines
+
+G0b routine grants: {'cc_v2_dev_routine_definer': 17, 'complaint_app_v2_dev': 10, 'cc_v2_dev_activation_cli': 2}  (expect definer 17, runtime 10, CLI 2)
+G0b locked accounts: ['cc_v2_dev_activation_cli', 'cc_v2_dev_routine_definer', 'cc_v2_dev_trigger_definer']
+
+ALL VERIFIED

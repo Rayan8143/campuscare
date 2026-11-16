@@ -1,0 +1,32 @@
+
+FULL ARCHIVE: backups/stage2/admin_post_stage2_full_20261116_105439.sql
+  size 237651 bytes  sha256 699e33cbe63790d152d5dcb7a371a40845eaa75a3c2f79044c4c0a393e8ec357
+  OK   sha256 recomputed == prep output
+  OK   ends with '-- Dump completed'
+  OK   header: Database: college_complaints_v2_dev
+  OK   no USE statement
+  OK   no CREATE DATABASE
+  OK   no `college_complaints` reference
+  OK   22 tables == P0
+  OK   4 triggers == P0 (definer cc_v2_dev_trigger_definer)
+  OK   4 views == P0 (SQL SECURITY INVOKER)
+  OK   row counts == P0 for all 22 tables
+  OK   17 stored routines
+  rows: {'complaints': 202, 'complaint_history': 155, 'complaint_assignments': 200, 'users': 117, 'students': 102, 'staff': 15}
+
+RESTORE IMAGE: backups/stage2/admin_post_stage2_restoreimage_20261116_105439.sql
+  size 166223 bytes  sha256 0bc8d2deeceb690778443e4cfee1e24fb63f927943f1471d00fe7f2b2e48b906
+  OK   sha256 recomputed == prep output
+  OK   ends with '-- Dump completed'
+  OK   header: Database: college_complaints_v2_dev
+  OK   no USE statement
+  OK   no CREATE DATABASE
+  OK   no `college_complaints` reference
+  OK   22 tables == P0
+  OK   4 triggers == P0 (definer cc_v2_dev_trigger_definer)
+  OK   4 views == P0 (SQL SECURITY INVOKER)
+  OK   row counts == P0 for all 22 tables
+  OK   0 stored routines
+  rows: {'complaints': 202, 'complaint_history': 155, 'complaint_assignments': 200, 'users': 117, 'students': 102, 'staff': 15}
+
+BOTH BACKUPS VERIFIED

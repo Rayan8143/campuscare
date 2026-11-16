@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import complaint_table with context %}
+{% block title %}Complaints{% endblock %}
+{% block heading %}Complaints{% endblock %}
+{% block actions %}{% if (identity.student and identity.can('complaint:submit_student')) or (identity.external and identity.can('complaint:submit_external')) %}
+<a href="{{ url_for('complaints.new') }}" class="btn btn-primary"><i data-lucide="plus" class="me-2"></i>New complaint</a>{% endif %}{% endblock %}
+{% block content %}
+<div class="card cc-card">
+  <div class="card-header flex-wrap gap-2">
+    <ul class="nav nav-pills">
+      {% for key, label in scopes %}<li class="nav-item"><a class="nav-link {{ 'active' if key == scope }}" href="{{ url_for('complaints.index', scope=key) }}">{{ label }}</a></li>{% endfor %}
+    </ul>
+    <form class="ms-auto d-flex flex-wrap gap-2" method="get">
+      <input type="hidden" name="scope" value="{{ scope }}">
+      <input class="form-control form-control-sm" style="width:180px" name="q" placeholder="Search title or #id" value="{{ args.get('q','') }}" maxlength="80">
+      <select class="form-select form-select-sm" style="width:auto" name="status"><option value="">Any status</option><option value="open" {{ 'selected' if args.get('status')=='open' }}>All open</option>
+        {% for s in statuses %}<option {{ 'selected' if args.get('status')==s }}>{{ s }}</option>{% endfor %}</select>
+      <select class="form-select form-select-sm" style="width:auto" name="priority"><option value="">Any priority</option>{% for p in priorities %}<option {{ 'selected' if args.get('priority')==p }}>{{ p }}</option>{% endfor %}</select>
+      {% if scope in ('all','queue') %}<select class="form-select form-select-sm" style="width:auto" name="department"><option value="">Any department</option>
+        {% for d in departments %}<option value="{{ d.department_id }}" {{ 'selected' if args.get('department')==d.department_id|string }}>{{ d.department_name }}</option>{% endfor %}</select>{% endif %}
+      <button class="btn btn-sm btn-outline-primary"><i data-lucide="filter"></i></button>
+    </form>
+  </div>
+  {{ complaint_table(rows, show_assignee=scope != 'own', empty='No complaints match these filters.') }}
+  <div class="card-footer small text-secondary">{{ rows|length }} shown{% if rows|length >= 200 %} (first 200 — refine filters){% endif %}</div>
+</div>
+{% endblock %}

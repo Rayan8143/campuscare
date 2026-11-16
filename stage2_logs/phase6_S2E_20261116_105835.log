@@ -1,0 +1,242 @@
+account=complaint_migrator_v2_dev@localhost db=college_complaints_v2_dev exit=0
+--- STDOUT ---
++-------------------------------------------------------------------------------------------+
+| notice                                                                                    |
++-------------------------------------------------------------------------------------------+
+| S2_E START - data-modifying acceptance tests (restore the post-Stage-2 backup afterwards) |
++-------------------------------------------------------------------------------------------+
++------------------------+------+-----------+-----------------+----------------+--------------+
+| result                 | dept | staffA_L1 | staffR_reviewer | staffO_officer | staffD_admin |
++------------------------+------+-----------+-----------------+----------------+--------------+
+| PASS fixture selection |    1 |         5 |               6 |              1 |            2 |
++------------------------+------+-----------+-----------------+----------------+--------------+
++-----------------------------------------------------------------------+
+| probe                                                                 |
++-----------------------------------------------------------------------+
+| F01 expect ERROR 1644 (student account cannot become Primary Officer) |
++-----------------------------------------------------------------------+
++----------------------------+
+| result                     |
++----------------------------+
+| FAIL F02 officer bootstrap |
++----------------------------+
++----------+
+| result   |
++----------+
+| FAIL E01 |
++----------+
++--------------------------------------------------------------------+
+| probe                                                              |
++--------------------------------------------------------------------+
+| E02 expect ERROR 1644 (another student cannot edit this complaint) |
++--------------------------------------------------------------------+
++----------+
+| result   |
++----------+
+| FAIL E03 |
++----------+
++-------------------------------------------------------------------+
+| probe                                                             |
++-------------------------------------------------------------------+
+| E04 expect ERROR 1644 (staff without edit permission cannot edit) |
++-------------------------------------------------------------------+
++----------+
+| result   |
++----------+
+| FAIL E05 |
++----------+
++---------------------------------------------------------------------------+
+| probe                                                                     |
++---------------------------------------------------------------------------+
+| E06 expect ERROR 1644 (supervisor cannot accept on the assignee's behalf) |
++---------------------------------------------------------------------------+
++----------+
+| result   |
++----------+
+| FAIL E07 |
++----------+
++------------------------------------------------------------------------------+
+| probe                                                                        |
++------------------------------------------------------------------------------+
+| E08 expect ERROR 1644 (R13: owner edits blocked once investigation accepted) |
++------------------------------------------------------------------------------+
++------------------------------------------------------------+
+| probe                                                      |
++------------------------------------------------------------+
+| E09 expect ERROR 1644 (supervisory edit requires a reason) |
++------------------------------------------------------------+
++----------+
+| result   |
++----------+
+| FAIL E10 |
++----------+
++---------------------------------------------------------------------------------------+
+| probe                                                                                 |
++---------------------------------------------------------------------------------------+
+| E11 expect ERROR 1644 (escalation request needs can_escalate on the exact membership) |
++---------------------------------------------------------------------------------------+
++----------+
+| result   |
++----------+
+| FAIL E12 |
++----------+
++--------------------------------------------------------------------------------+
+| probe                                                                          |
++--------------------------------------------------------------------------------+
+| E13 expect ERROR 1644 (requesting is not executing: staff lacks escalate_tier) |
++--------------------------------------------------------------------------------+
++----------+
+| result   |
++----------+
+| FAIL E14 |
++----------+
++----------------------------------------------------------------+
+| probe                                                          |
++----------------------------------------------------------------+
+| E15 expect ERROR 1644 (previous assignee can no longer resume) |
++----------------------------------------------------------------+
++---------------------------------------------------------------------------+
+| probe                                                                     |
++---------------------------------------------------------------------------+
+| E16 expect ERROR 1644 (R14: Level 1 member cannot be assigned at Level 2) |
++---------------------------------------------------------------------------+
++----------+
+| result   |
++----------+
+| FAIL E17 |
++----------+
++-----------------------------------------------------------+
+| probe                                                     |
++-----------------------------------------------------------+
+| E18 expect ERROR 1644 (only the Primary Officer verifies) |
++-----------------------------------------------------------+
++----------+
+| result   |
++----------+
+| FAIL E19 |
++----------+
++-----------+
+| result    |
++-----------+
+| FAIL E19b |
++-----------+
++-----------+
+| result    |
++-----------+
+| FAIL E19c |
++-----------+
++-------------------------------------------------------------------------------------------+
+| probe                                                                                     |
++-------------------------------------------------------------------------------------------+
+| E20 expect ERROR 1644 "Separation of duties: ..." (officer cannot approve own submission) |
++-------------------------------------------------------------------------------------------+
++----------+
+| result   |
++----------+
+| FAIL E21 |
++----------+
++-----------+
+| result    |
++-----------+
+| FAIL E21b |
++-----------+
++-------------------------------------------------------------+
+| probe                                                       |
++-------------------------------------------------------------+
+| E22 expect ERROR 1644 (a reviewer cannot assign at Level 4) |
++-------------------------------------------------------------+
++-----------------------------------------------------------------------+
+| probe                                                                 |
++-----------------------------------------------------------------------+
+| E23 expect ERROR 1644 (former Level 1 assignee cannot act at Level 4) |
++-----------------------------------------------------------------------+
++----------+
+| result   |
++----------+
+| FAIL E24 |
++----------+
++------------------------------------------------------------------------------------------------------+
+| result                                                                                               |
++------------------------------------------------------------------------------------------------------+
+| PASS E25 precondition: X has an active VERIFIED profile + Level 1 membership but an INACTIVE account |
++------------------------------------------------------------------------------------------------------+
++-------------------------------------------------------------------------------------------------------+
+| probe                                                                                                 |
++-------------------------------------------------------------------------------------------------------+
+| E26 expect ERROR 1644 "Target staff not eligible: inactive account/role ..." (inactive users account) |
++-------------------------------------------------------------------------------------------------------+
++--------------------------------------------------------------------+
+| result                                                             |
++--------------------------------------------------------------------+
+| PASS E27 inactive account received no assignment and no ledger row |
++--------------------------------------------------------------------+
++----------------------------------------------------------------------------------------------------+
+| probe                                                                                              |
++----------------------------------------------------------------------------------------------------+
+| E28 expect ERROR 1644 "Target staff not eligible: inactive account/role ..." (inactive STAFF role) |
++----------------------------------------------------------------------------------------------------+
++----------------------------------------------------------------+
+| result                                                         |
++----------------------------------------------------------------+
+| PASS E29 staff with inactive STAFF role received no assignment |
++----------------------------------------------------------------+
++---------------------------+-------------------+----------------------------------+
+| complaints_now_expect_206 | test_history_rows | cache_ledger_mismatches_expect_0 |
++---------------------------+-------------------+----------------------------------+
+|                       202 |                 0 |                                0 |
++---------------------------+-------------------+----------------------------------+
++----------------------------------------------------------------+
+| notice                                                         |
++----------------------------------------------------------------+
+| S2_E END - now RESTORE the post-Stage-2 backup (guide Step 6b) |
++----------------------------------------------------------------+
+
+--- STDERR ---
+ERROR 1062 (23000) at line 53: Duplicate entry '103-3-1' for key 'staff_workflow_assignments.uk_staff_workflow_mapping'
+ERROR 1370 (42000) at line 58: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.transfer_primary_officer'
+ERROR 1370 (42000) at line 59: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.transfer_primary_officer'
+ERROR 1370 (42000) at line 66: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.submit_complaint'
+ERROR 1370 (42000) at line 71: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.update_complaint_details'
+ERROR 1370 (42000) at line 73: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.update_complaint_details'
+ERROR 1370 (42000) at line 81: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.update_complaint_details'
+ERROR 1370 (42000) at line 86: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.reassign_complaint'
+ERROR 1370 (42000) at line 91: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.transition_complaint_status'
+ERROR 1370 (42000) at line 93: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.transition_complaint_status'
+ERROR 1370 (42000) at line 100: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.update_complaint_details'
+ERROR 1370 (42000) at line 103: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.update_complaint_details'
+ERROR 1370 (42000) at line 104: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.update_complaint_details'
+ERROR 1370 (42000) at line 110: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.request_escalation'
+ERROR 1370 (42000) at line 113: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.request_escalation'
+ERROR 1370 (42000) at line 119: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.escalate_complaint'
+ERROR 1370 (42000) at line 124: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.escalate_complaint'
+ERROR 1370 (42000) at line 138: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.transition_complaint_status'
+ERROR 1370 (42000) at line 141: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.reassign_complaint'
+ERROR 1370 (42000) at line 143: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.reassign_complaint'
+ERROR 1370 (42000) at line 144: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.transition_complaint_status'
+ERROR 1370 (42000) at line 154: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.transition_complaint_status'
+ERROR 1370 (42000) at line 156: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.transition_complaint_status'
+ERROR 1370 (42000) at line 157: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.transition_complaint_status'
+ERROR 1370 (42000) at line 172: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.submit_complaint'
+ERROR 1370 (42000) at line 173: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.reassign_complaint'
+ERROR 1370 (42000) at line 174: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.transition_complaint_status'
+ERROR 1370 (42000) at line 175: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.transition_complaint_status'
+ERROR 1370 (42000) at line 182: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.transition_complaint_status'
+ERROR 1370 (42000) at line 185: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.transition_complaint_status'
+ERROR 1370 (42000) at line 193: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.submit_complaint'
+ERROR 1370 (42000) at line 194: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.reassign_complaint'
+ERROR 1370 (42000) at line 195: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.transition_complaint_status'
+ERROR 1370 (42000) at line 196: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.escalate_complaint'
+ERROR 1370 (42000) at line 198: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.reassign_complaint'
+ERROR 1370 (42000) at line 199: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.reassign_complaint'
+ERROR 1370 (42000) at line 201: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.transition_complaint_status'
+ERROR 1370 (42000) at line 202: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.transition_complaint_status'
+ERROR 1370 (42000) at line 203: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.transition_complaint_status'
+ERROR 1370 (42000) at line 226: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.submit_complaint'
+ERROR 1370 (42000) at line 228: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.reassign_complaint'
+ERROR 1370 (42000) at line 238: execute command denied to user 'cc_v2_dev_routine_definer'@'localhost' for routine 'college_complaints_v2_dev.reassign_complaint'
+
+--- SUMMARY ---
+PASS rows (3): ['E25', 'E27', 'E29']
+errors (42): [(1062, '53'), (1370, '58'), (1370, '59'), (1370, '66'), (1370, '71'), (1370, '73'), (1370, '81'), (1370, '86'), (1370, '91'), (1370, '93'), (1370, '100'), (1370, '103'), (1370, '104'), (1370, '110'), (1370, '113'), (1370, '119'), (1370, '124'), (1370, '138'), (1370, '141'), (1370, '143'), (1370, '144'), (1370, '154'), (1370, '156'), (1370, '157'), (1370, '172'), (1370, '173'), (1370, '174'), (1370, '175'), (1370, '182'), (1370, '185'), (1370, '193'), (1370, '194'), (1370, '195'), (1370, '196'), (1370, '198'), (1370, '199'), (1370, '201'), (1370, '202'), (1370, '203'), (1370, '226'), (1370, '228'), (1370, '238')]
+problems: ["FAIL rows: ['FAIL F02 officer bootstrap ', 'FAIL E01 ', 'FAIL E03 ', 'FAIL E05 ', 'FAIL E07 ', 'FAIL E10 ', 'FAIL E12 ', 'FAIL E14 ', 'FAIL E17 ', 'FAIL E19 ', 'FAIL E19b ', 'FAIL E19c ', 'FAIL E21 ', 'FAIL E21b ', 'FAIL E24 ']", "PASS rows ['E25', 'E27', 'E29'] != expected ['F02', 'E01', 'E03', 'E05', 'E07', 'E10', 'E12', 'E14', 'E17', 'E19', 'E19b', 'E19c', 'E21', 'E21b', 'E24', 'E25', 'E27', 'E29']", 'expected 16 x ERROR 1644, got [1062, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370, 1370]']
+S2_E RESULT: FAIL

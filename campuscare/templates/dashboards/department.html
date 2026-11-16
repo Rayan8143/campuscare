@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import stat, complaint_table, activity with context %}
+{% block title %}Department{% endblock %}
+{% block heading %}{{ 'Department head overview' if category == 'head' else 'Review desk' }}{% endblock %}
+{% block content %}
+<div class="cc-hero mb-4"><div style="position:relative;z-index:1">
+  <span class="cc-pill mb-2"><i data-lucide="building" style="width:14px"></i>{{ identity.staff.designation or identity.staff.department_name }}</span>
+  <h3 class="mb-1">{% for m in identity.memberships if m.level_number >= 2 %}{{ m.department_name }} · {{ m.level_name }}{{ ', ' if not loop.last }}{% endfor %}</h3>
+  <div class="small">Assign staff, unblock escalations and keep your department's complaints moving.</div>
+</div></div>
+<div class="row g-3 mb-4">
+  {{ stat('Open (including escalated)', counts['Submitted'] + counts['In Progress'] + counts['Escalated'], 'layers', 'blue') }}
+  {{ stat('Escalated', counts['Escalated'], 'trending-up', 'orange') }}
+  {{ stat('Pending verification', counts['Resolution Pending Verification'], 'badge-check', 'purple') }}
+  {{ stat('Resolved', counts['Resolved'], 'check-circle-2', 'green', hint=('avg %s days'|format(avg_days)) if avg_days else None) }}
+</div>
+<div class="row g-3 mb-3">
+  <div class="col-lg-7"><div class="card cc-card h-100"><div class="card-header"><h3 class="card-title">Needs assignment</h3></div>
+    {{ complaint_table(unassigned, show_assignee=False, empty='Every open complaint has an assignee.') }}</div></div>
+  <div class="col-lg-5"><div class="card cc-card h-100"><div class="card-header"><h3 class="card-title">Monthly intake</h3></div>
+    <div class="card-body"><div class="chart-box"><canvas id="trend"></canvas></div></div></div></div>
+</div>
+<div class="row g-3 mb-3">
+  <div class="col-lg-7"><div class="card cc-card h-100"><div class="card-header"><h3 class="card-title">Escalated complaints</h3></div>
+    {{ complaint_table(escalated, empty='No escalated complaints.') }}</div></div>
+  <div class="col-lg-5"><div class="card cc-card h-100"><div class="card-header"><h3 class="card-title">Open by priority</h3></div>
+    <div class="card-body"><div class="chart-box"><canvas id="prio"></canvas></div></div></div></div>
+</div>
+<div class="row g-3">
+  <div class="col-lg-7"><div class="card cc-card"><div class="card-header"><h3 class="card-title">Staff workload</h3></div>
+    <div class="table-responsive"><table class="table card-table table-vcenter">
+      <thead><tr><th>Staff</th><th>Department</th><th class="text-end">Open</th><th class="text-end">Resolved</th></tr></thead><tbody>
+      {% for w in workload %}<tr><td><div class="fw-medium">{{ w.full_name }}</div><div class="small text-secondary">{{ w.designation or '' }}</div></td>
+        <td>{{ w.department_name }}</td><td class="text-end">{{ w.open_n or 0 }}</td><td class="text-end">{{ w.resolved_n or 0 }}</td></tr>
+      {% else %}<tr><td colspan="4" class="text-secondary">No staff.</td></tr>{% endfor %}</tbody></table></div></div>
+    {% if mine %}<div class="card cc-card mt-3"><div class="card-header"><h3 class="card-title">Assigned to me</h3></div>{{ complaint_table(mine, show_assignee=False) }}</div>{% endif %}
+  </div>
+  <div class="col-lg-5"><div class="card cc-card"><div class="card-header"><h3 class="card-title">Department activity</h3></div>
+    <div class="card-body">{{ activity(feed) }}</div></div></div>
+</div>
+{% endblock %}
+{% block scripts %}
+{% include "partials/charts.html" %}
+<script>
+ccChart('trend', 'bar', {{ trend|map(attribute='ym')|list|tojson }}, [
+  {label: 'Filed', data: {{ trend|map(attribute='n')|list|tojson }}},
+  {label: 'Resolved', data: {{ trend|map(attribute='resolved')|map('int')|list|tojson }}}]);
+ccChart('prio', 'doughnut', {{ by_priority|map(attribute='label')|list|tojson }}, [{data: {{ by_priority|map(attribute='n')|list|tojson }}, backgroundColor: ['#d63939','#f59f00','#94a3b8']}]);
+</script>
+{% endblock %}

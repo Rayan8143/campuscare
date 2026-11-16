@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import status_badge, priority_badge with context %}
+{% block title %}#{{ c.complaint_id }}{% endblock %}
+{% block pretitle %}Complaint #{{ c.complaint_id }} · {{ c.responsible_department }}{% endblock %}
+{% block heading %}{{ c.title }}{% endblock %}
+{% block actions %}<div class="d-flex gap-2">{{ priority_badge(c.priority) }} {{ status_badge(c.status) }}</div>{% endblock %}
+{% macro csrf() %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endmacro %}
+{% block content %}
+<div class="card cc-card mb-3"><div class="card-body">
+  <div class="cc-steps">
+    {% for n, name in [(1,'Staff'),(2,'Reviewer'),(3,'Dept. head'),(4,'Primary officer')] %}
+    <div class="cc-step {{ 'current' if n == level else ('done' if n < level) }}"><b>L{{ n }}</b>{{ name }}</div>
+    {% endfor %}
+  </div>
+</div></div>
+
+<div class="row g-3">
+  <div class="col-lg-8">
+    <div class="card cc-card mb-3"><div class="card-body">
+      <div class="row g-3 mb-3 small">
+        <div class="col-sm-4"><div class="text-secondary">Category</div><div class="fw-medium">{{ c.category }}</div></div>
+        <div class="col-sm-4"><div class="text-secondary">Filed</div><div class="fw-medium">{{ c.created_at|dt }}</div></div>
+        <div class="col-sm-4"><div class="text-secondary">{{ 'Resolved' if c.resolved_at else 'Current level' }}</div><div class="fw-medium">{{ c.resolved_at|dt if c.resolved_at else c.current_level_name }}</div></div>
+        <div class="col-sm-4"><div class="text-secondary">Complainant</div><div class="fw-medium">{{ c.complainant_name }} <span class="badge bg-secondary-lt">{{ c.complainant_type|title }}</span></div></div>
+        {% if internal %}<div class="col-sm-4"><div class="text-secondary">Contact</div><div class="fw-medium text-truncate">{{ c.complainant_email or '—' }}</div></div>{% endif %}
+        <div class="col-sm-4"><div class="text-secondary">Assignee</div><div class="fw-medium">{{ c.assigned_staff_name or 'Awaiting assignment' }}</div></div>
+      </div>
+      <h4>Description</h4>
+      <p class="mb-0" style="white-space:pre-wrap">{{ c.description }}</p>
+    </div></div>
+
+    <div class="card cc-card mb-3"><div class="card-header"><h3 class="card-title"><i data-lucide="history" class="me-2"></i>Timeline</h3></div>
+      <div class="card-body"><ul class="cc-timeline">
+      {% for t in timeline %}
+        <li class="tl-{{ t.action_type }}"><div class="fw-medium">{{ t.action_type|replace('_',' ')|title }}
+          <span class="text-secondary fw-normal">· {% if t.old_status and t.old_status != t.new_status %}{{ t.old_status }} → {% endif %}{{ t.new_status }}</span></div>
+          {% if t.remarks %}<div class="small" style="white-space:pre-wrap">{{ t.remarks }}</div>{% endif %}
+          <div class="small text-muted">{{ t.changed_at|dt }}{% if t.actor_name %} · {{ t.actor_name }}{% endif %}</div></li>
+      {% else %}<li>No history recorded.</li>{% endfor %}
+      </ul></div></div>
+
+    {% if internal and verifications %}
+    <div class="card cc-card mb-3"><div class="card-header"><h3 class="card-title"><i data-lucide="badge-check" class="me-2"></i>Resolution verifications</h3></div>
+      <div class="list-group list-group-flush">{% for v in verifications %}
+        <div class="list-group-item"><div class="d-flex justify-content-between"><b>{{ v.submitted_by }}</b>
+          <span class="badge bg-{{ {'PENDING':'purple','APPROVED':'green','RETURNED':'red'}[v.decision] }}-lt">{{ v.decision|title }}</span></div>
+          <div class="small" style="white-space:pre-wrap">{{ v.resolution_notes }}</div>
+          {% if v.officer_remarks %}<div class="small text-secondary mt-1">Officer ({{ v.officer_name }}): {{ v.officer_remarks }}</div>{% endif %}
+          <div class="small text-muted">{{ v.submitted_at|dt }}{% if v.reviewed_at %} · reviewed {{ v.reviewed_at|dt }}{% endif %}</div></div>
+      {% endfor %}</div></div>
+    {% endif %}
+  </div>
+
+  <div class="col-lg-4">
+    {% if acts %}
+    <div class="card cc-card mb-3"><div class="card-header"><h3 class="card-title"><i data-lucide="zap" class="me-2"></i>Actions</h3></div><div class="card-body">
+      {% set url = url_for('complaints.action', cid=c.complaint_id) %}
+
+      {% if 'accept' in acts %}<form method="post" action="{{ url }}" class="mb-3">{{ csrf() }}<input type="hidden" name="action" value="accept">
+        <label class="form-label">Accept and start work</label>
+        <input class="form-control mb-2" name="remarks" maxlength="255" placeholder="Optional note">
+        <button class="btn btn-primary w-100"><i data-lucide="play" class="me-2"></i>Accept</button></form>{% endif %}
+
+      {% if 'submit_resolution' in acts %}<form method="post" action="{{ url }}" class="mb-3">{{ csrf() }}<input type="hidden" name="action" value="submit_resolution">
+        <label class="form-label">Submit resolution for verification</label>
+        <textarea class="form-control mb-2" name="remarks" rows="3" maxlength="255" required placeholder="What was done to resolve it?"></textarea>
+        <button class="btn btn-teal w-100"><i data-lucide="check" class="me-2"></i>Submit resolution</button></form>{% endif %}
+
+      {% if 'verify' in acts %}<form method="post" action="{{ url }}" class="mb-3">{{ csrf() }}<input type="hidden" name="action" value="verify">
+        <label class="form-label">Verify resolution</label>
+        <textarea class="form-control mb-2" name="remarks" rows="2" maxlength="255" placeholder="Remarks (required when returning)"></textarea>
+        <div class="d-flex gap-2"><button name="decision" value="approve" class="btn btn-success flex-fill">Approve</button>
+          <button name="decision" value="return" class="btn btn-outline-danger flex-fill">Return</button></div>
+        <div class="small text-secondary mt-1">You cannot approve a resolution you submitted.</div></form>{% endif %}
+
+      {% if 'final_decision' in acts %}<form method="post" action="{{ url }}" class="mb-3">{{ csrf() }}<input type="hidden" name="action" value="final_decision">
+        <label class="form-label">Final decision (Level 4)</label>
+        <textarea class="form-control mb-2" name="remarks" rows="2" maxlength="200" required placeholder="Decision reason"></textarea>
+        <button class="btn btn-success w-100">Resolve</button></form>{% endif %}
+
+      {% if 'assign' in acts %}<form method="post" action="{{ url }}" class="mb-3">{{ csrf() }}<input type="hidden" name="action" value="assign">
+        <label class="form-label">{{ 'Reassign' if c.assigned_staff_id else 'Assign' }} (current level)</label>
+        <select class="form-select mb-2" name="staff_id" required><option value="">Choose staff…</option>
+          {% for s in assignees if s.staff_id != c.assigned_staff_id %}<option value="{{ s.staff_id }}">{{ s.full_name }}{{ ' · ' ~ s.designation if s.designation }}</option>{% endfor %}</select>
+        {% if not assignees %}<div class="small text-warning mb-2">No eligible members exist at this level for this department.</div>{% endif %}
+        <input class="form-control mb-2" name="reason" maxlength="255" required placeholder="Reason">
+        <button class="btn btn-outline-primary w-100"><i data-lucide="user-check" class="me-2"></i>Save assignment</button></form>{% endif %}
+
+      {% if 'request_escalation' in acts %}<form method="post" action="{{ url }}" class="mb-3">{{ csrf() }}<input type="hidden" name="action" value="request_escalation">
+        <label class="form-label">Request escalation</label>
+        <input class="form-control mb-2" name="reason" maxlength="255" required placeholder="Why does this need a higher level?">
+        <button class="btn btn-outline-warning w-100"><i data-lucide="arrow-up-circle" class="me-2"></i>Request</button></form>{% endif %}
+
+      {% if 'escalate' in acts and levels %}<form method="post" action="{{ url }}" class="mb-3">{{ csrf() }}<input type="hidden" name="action" value="escalate">
+        <label class="form-label">Escalate</label>
+        <select class="form-select mb-2" name="to_level_id">{% for l in levels %}<option value="{{ l.level_id }}">{{ l.level_name }}</option>{% endfor %}</select>
+        <textarea class="form-control mb-2" name="reason" rows="2" maxlength="1000" required placeholder="Escalation reason"></textarea>
+        <div class="small text-secondary mb-2">The current assignment closes; the complaint must be reassigned at the new level.</div>
+        <button class="btn btn-warning w-100"><i data-lucide="trending-up" class="me-2"></i>Escalate</button></form>{% endif %}
+
+      {% if 'reject' in acts %}<form method="post" action="{{ url }}" class="mb-3" onsubmit="return confirm('Reject this complaint?')">{{ csrf() }}<input type="hidden" name="action" value="reject">
+        <label class="form-label">Reject</label>
+        <input class="form-control mb-2" name="remarks" maxlength="200" required placeholder="Rejection reason">
+        <button class="btn btn-outline-danger w-100">Reject</button></form>{% endif %}
+
+      {% if 'archive' in acts %}<form method="post" action="{{ url }}" onsubmit="return confirm('Archive this complaint? It will be hidden from all lists.')">{{ csrf() }}<input type="hidden" name="action" value="archive">
+        <label class="form-label">Archive</label>
+        <input class="form-control mb-2" name="reason" maxlength="255" required placeholder="Archive reason">
+        <button class="btn btn-ghost-danger w-100"><i data-lucide="archive" class="me-2"></i>Archive</button></form>{% endif %}
+    </div></div>
+    {% endif %}
+
+    {% if 'edit_own' in acts or 'edit_details' in acts %}
+    <div class="card cc-card mb-3"><div class="card-header"><h3 class="card-title"><i data-lucide="pencil" class="me-2"></i>Edit details</h3></div>
+      <form method="post" action="{{ url_for('complaints.action', cid=c.complaint_id) }}" class="card-body">{{ csrf() }}
+        <input type="hidden" name="action" value="{{ 'edit_own' if 'edit_own' in acts else 'edit_details' }}">
+        <input class="form-control mb-2" name="title" maxlength="180" value="{{ c.title }}">
+        <textarea class="form-control mb-2" name="description" rows="4" maxlength="5000">{{ c.description }}</textarea>
+        <div class="d-flex gap-2 mb-2"><select class="form-select" name="category">{% for x in categories %}<option {{ 'selected' if x == c.category }}>{{ x }}</option>{% endfor %}</select>
+          <select class="form-select" name="priority">{% for x in priorities %}<option {{ 'selected' if x == c.priority }}>{{ x }}</option>{% endfor %}</select></div>
+        {% if 'edit_own' not in acts %}<input class="form-control mb-2" name="reason" maxlength="150" required placeholder="Reason for supervisory edit">{% endif %}
+        <button class="btn btn-outline-primary w-100">Save changes</button></form></div>
+    {% endif %}
+
+    {% if escalations %}<div class="card cc-card mb-3"><div class="card-header"><h3 class="card-title"><i data-lucide="trending-up" class="me-2"></i>Escalations</h3></div>
+      <div class="list-group list-group-flush">{% for e in escalations %}<div class="list-group-item small">
+        <b>{{ e.from_level }} → {{ e.to_level }}</b><div>{{ e.escalation_reason }}</div><div class="text-muted">{{ e.escalated_at|dt }} · {{ e.actor_name }}</div></div>{% endfor %}</div></div>{% endif %}
+
+    {% if internal and assignments %}<div class="card cc-card"><div class="card-header"><h3 class="card-title"><i data-lucide="users" class="me-2"></i>Assignment history</h3></div>
+      <div class="list-group list-group-flush">{% for a in assignments %}<div class="list-group-item small">
+        <div class="d-flex justify-content-between"><b>{{ a.staff_name }}</b>{% if a.is_active %}<span class="badge bg-green-lt">Active</span>{% endif %}</div>
+        <div class="text-secondary">{{ a.designation or 'Staff' }}{% if a.assignment_reason %} · {{ a.assignment_reason }}{% endif %}</div>
+        <div class="text-muted">{{ a.assigned_at|dt }}{% if a.assigned_by %} by {{ a.assigned_by }}{% elif a.assignment_source == 'LEGACY_IMPORT' %} (imported){% endif %}{% if a.unassigned_at %} – {{ a.unassigned_at|dt }}{% endif %}</div></div>{% endfor %}</div></div>{% endif %}
+  </div>
+</div>
+{% endblock %}

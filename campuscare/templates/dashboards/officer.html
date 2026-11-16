@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import stat, complaint_table, activity with context %}
+{% block title %}Command centre{% endblock %}
+{% block heading %}{{ 'Primary Complaint Officer' if category == 'officer' else 'Administration' }} · Institution overview{% endblock %}
+{% block content %}
+<div class="row g-3 mb-4">
+  {% set open_n = counts['Submitted'] + counts['In Progress'] + counts['Escalated'] + counts['Resolution Pending Verification'] %}
+  {{ stat('Open (incl. escalated & pending verification)', open_n, 'activity', 'blue') }}
+  {{ stat('Awaiting your verification', counts['Resolution Pending Verification'], 'badge-check', 'purple') }}
+  {{ stat('Escalated', counts['Escalated'], 'trending-up', 'orange') }}
+  {{ stat('Resolved', counts['Resolved'], 'check-circle-2', 'green', hint=('avg %s days to resolve'|format(avg_days)) if avg_days else None) }}
+</div>
+{% if category == 'officer' %}
+<div class="row g-3 mb-3">
+  <div class="col-lg-6"><div class="card cc-card h-100"><div class="card-header"><h3 class="card-title"><i data-lucide="badge-check" class="me-2 text-purple"></i>Verification queue</h3></div>
+    {{ complaint_table(pending_verification, show_dept=True, empty='No resolutions awaiting verification.') }}</div></div>
+  <div class="col-lg-6"><div class="card cc-card h-100"><div class="card-header"><h3 class="card-title"><i data-lucide="flag" class="me-2 text-orange"></i>Level 4 complaints</h3></div>
+    {{ complaint_table(level4, empty='Nothing has reached Level 4.') }}</div></div>
+</div>
+{% endif %}
+<div class="row g-3 mb-3">
+  <div class="col-lg-8"><div class="card cc-card h-100"><div class="card-header"><h3 class="card-title">Intake vs. resolution (6 months)</h3></div>
+    <div class="card-body"><div class="chart-box"><canvas id="trend"></canvas></div></div></div></div>
+  <div class="col-lg-4"><div class="card cc-card h-100"><div class="card-header"><h3 class="card-title">Status mix</h3></div>
+    <div class="card-body"><div class="chart-box"><canvas id="status"></canvas></div></div></div></div>
+</div>
+<div class="row g-3">
+  <div class="col-lg-7"><div class="card cc-card"><div class="card-header"><h3 class="card-title">Departments</h3></div>
+    <div class="table-responsive"><table class="table card-table table-vcenter"><thead><tr><th>Department</th><th class="text-end">Total</th><th class="text-end">Resolved</th><th class="text-end">Pending</th><th style="width:30%">Resolution rate</th></tr></thead><tbody>
+    {% for d in summary %}{% set rate = ((d.resolved_complaints or 0) * 100 / d.total_complaints)|round|int if d.total_complaints else 0 %}
+      <tr><td class="fw-medium">{{ d.department_name }}</td><td class="text-end">{{ d.total_complaints }}</td><td class="text-end">{{ d.resolved_complaints or 0 }}</td><td class="text-end">{{ d.pending_complaints or 0 }}</td>
+      <td><div class="d-flex align-items-center gap-2"><div class="progress progress-sm flex-fill"><div class="progress-bar bg-teal" style="width:{{ rate }}%"></div></div><span class="small">{{ rate }}%</span></div></td></tr>
+    {% endfor %}</tbody></table></div></div>
+    <div class="card cc-card mt-3"><div class="card-header"><h3 class="card-title">Open by workflow level</h3></div>
+      <div class="card-body"><div class="chart-box" style="height:200px"><canvas id="levels"></canvas></div></div></div>
+  </div>
+  <div class="col-lg-5"><div class="card cc-card"><div class="card-header"><h3 class="card-title">Live activity</h3></div><div class="card-body">{{ activity(feed) }}</div></div></div>
+</div>
+{% endblock %}
+{% block scripts %}
+{% include "partials/charts.html" %}
+<script>
+ccChart('trend', 'line', {{ trend|map(attribute='ym')|list|tojson }}, [
+  {label: 'Filed', data: {{ trend|map(attribute='n')|list|tojson }}},
+  {label: 'Resolved', data: {{ trend|map(attribute='resolved')|map('int')|list|tojson }}}]);
+ccChart('status', 'doughnut', {{ counts.keys()|list|tojson }}, [{data: {{ counts.values()|list|tojson }}, backgroundColor: ['#2563eb','#0ea5e9','#f59f00','#7c3aed','#2fb344','#d63939']}]);
+ccChart('levels', 'bar', {{ by_level|map(attribute='label')|list|tojson }}, [{label: 'Open', data: {{ by_level|map(attribute='n')|list|tojson }}}], {indexAxis: 'y'});
+</script>
+{% endblock %}

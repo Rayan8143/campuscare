@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Activate account{% endblock %}
+{% block bare %}
+<div class="cc-auth-main" style="min-height:100vh">
+  <div class="cc-auth-card">
+    <div class="cc-brand mb-4" style="color:var(--cc-navy)!important"><span class="cc-logo"><i data-lucide="key-round"></i></span><span style="color:var(--cc-navy)">Activate account</span></div>
+    {% include "partials/flash.html" %}
+    <form method="post" action="{{ url_for('auth.activate_submit') }}" class="card cc-card" autocomplete="off"><div class="card-body p-4">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <p class="text-secondary">Enter the one-time code issued by the administrator and choose a password ({{ min_length }}+ characters).</p>
+      <div class="mb-3"><label class="form-label" for="t">One-time code</label><input id="t" class="form-control" name="token" required maxlength="200" autocomplete="off" spellcheck="false"></div>
+      <div class="mb-3"><label class="form-label" for="p1">New password</label><input id="p1" type="password" class="form-control" name="password" minlength="{{ min_length }}" required autocomplete="new-password"></div>
+      <div class="mb-3"><label class="form-label" for="p2">Confirm password</label><input id="p2" type="password" class="form-control" name="password2" minlength="{{ min_length }}" required autocomplete="new-password"></div>
+      <button class="btn btn-primary w-100">Set password</button>
+    </div></form>
+    <p class="text-center small mt-3"><a href="{{ url_for('auth.login') }}">Back to sign in</a></p>
+  </div>
+</div>
+{% endblock %}

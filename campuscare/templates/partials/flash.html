@@ -1,0 +1,8 @@
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% for cat, msg in messages %}
+  <div class="alert alert-{{ cat if cat in ['success','danger','warning','info'] else 'info' }} alert-dismissible cc-glass" role="alert">
+    <div class="d-flex"><i data-lucide="{{ {'success':'check-circle-2','danger':'alert-octagon','warning':'alert-triangle'}.get(cat,'info') }}" class="me-2"></i><div>{{ msg }}</div></div>
+    <a class="btn-close" data-bs-dismiss="alert" aria-label="close"></a>
+  </div>
+  {% endfor %}
+{% endwith %}

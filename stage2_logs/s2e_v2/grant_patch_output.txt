@@ -1,0 +1,92 @@
+exit=0
+--------------
+GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`escalate_complaint`           TO 'cc_v2_dev_routine_definer'@'localhost'
+--------------
+
+--------------
+GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`issue_account_token`          TO 'cc_v2_dev_routine_definer'@'localhost'
+--------------
+
+--------------
+GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`issue_account_token_operator` TO 'cc_v2_dev_routine_definer'@'localhost'
+--------------
+
+--------------
+GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`reassign_complaint`           TO 'cc_v2_dev_routine_definer'@'localhost'
+--------------
+
+--------------
+GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`redeem_account_token`         TO 'cc_v2_dev_routine_definer'@'localhost'
+--------------
+
+--------------
+GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`request_escalation`           TO 'cc_v2_dev_routine_definer'@'localhost'
+--------------
+
+--------------
+GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`soft_delete_complaint`        TO 'cc_v2_dev_routine_definer'@'localhost'
+--------------
+
+--------------
+GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`submit_complaint`             TO 'cc_v2_dev_routine_definer'@'localhost'
+--------------
+
+--------------
+GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`transfer_primary_officer`     TO 'cc_v2_dev_routine_definer'@'localhost'
+--------------
+
+--------------
+GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`transition_complaint_status`  TO 'cc_v2_dev_routine_definer'@'localhost'
+--------------
+
+--------------
+GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`update_complaint_details`     TO 'cc_v2_dev_routine_definer'@'localhost'
+--------------
+
+--------------
+SELECT User, COUNT(*) AS routine_grants FROM mysql.procs_priv
+ WHERE Db = 'college_complaints_v2_dev' GROUP BY User ORDER BY User
+--------------
+
++---------------------------+----------------+
+| User                      | routine_grants |
++---------------------------+----------------+
+| cc_v2_dev_activation_cli  |              2 |
+| cc_v2_dev_routine_definer |             17 |
+| complaint_app_v2_dev      |             10 |
++---------------------------+----------------+
+--------------
+SELECT Routine_name, Proc_priv FROM mysql.procs_priv
+ WHERE Db = 'college_complaints_v2_dev' AND User = 'cc_v2_dev_routine_definer' ORDER BY Routine_name
+--------------
+
++------------------------------+-----------+
+| Routine_name                 | Proc_priv |
++------------------------------+-----------+
+| cc_auth_department_authority | Execute   |
+| cc_auth_has_permission       | Execute   |
+| cc_auth_is_assigned_staff    | Execute   |
+| cc_auth_is_primary_officer   | Execute   |
+| cc_auth_staff_eligible       | Execute   |
+| cc_token_issue_core          | Execute   |
+| escalate_complaint           | Execute   |
+| issue_account_token          | Execute   |
+| issue_account_token_operator | Execute   |
+| reassign_complaint           | Execute   |
+| redeem_account_token         | Execute   |
+| request_escalation           | Execute   |
+| soft_delete_complaint        | Execute   |
+| submit_complaint             | Execute   |
+| transfer_primary_officer     | Execute   |
+| transition_complaint_status  | Execute   |
+| update_complaint_details     | Execute   |
++------------------------------+-----------+
+--------------
+SELECT user, host, account_locked FROM mysql.user WHERE user = 'cc_v2_dev_routine_definer'
+--------------
+
++---------------------------+-----------+----------------+
+| user                      | host      | account_locked |
++---------------------------+-----------+----------------+
+| cc_v2_dev_routine_definer | localhost | Y              |
++---------------------------+-----------+----------------+

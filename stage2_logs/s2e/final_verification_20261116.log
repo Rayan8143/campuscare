@@ -1,0 +1,35 @@
+GRANTS: G1 == G0 (all five accounts, procs_priv rows, lock state): True
+  raw bytes: G0 has 
+: True | G1 has 
+: True
+snapshot P1_post_restore_snapshot.json: 22 tables, 17 routines, 4 triggers, 4 views, 9 ledger rows, AI={'complaints': 203, 'complaint_assignments': 257, 'staff_workflow_assignments': 16, 'account_activations': 1}
+TABLES: 22 present: True | row count or checksum differs from P0: none
+  academic_departments         P0=[10, 1154636698]  P1=[10, 1154636698]
+  account_activations          P0=[0, 0]  P1=[0, 0]
+  complaint_assignments        P0=[200, 3638430215]  P1=[200, 3638430215]
+  complaint_escalations        P0=[0, 0]  P1=[0, 0]
+  complaint_history            P0=[155, 864112168]  P1=[155, 864112168]
+  complaints                   P0=[202, 2272471601]  P1=[202, 2272471601]
+  departments                  P0=[5, 671411380]  P1=[5, 671411380]
+  external_complainants        P0=[0, 0]  P1=[0, 0]
+  notifications                P0=[0, 0]  P1=[0, 0]
+  permissions                  P0=[27, 3120442168]  P1=[27, 3120442168]
+  primary_officer_assignment   P0=[0, 0]  P1=[0, 0]
+  primary_officer_history      P0=[0, 0]  P1=[0, 0]
+  resolution_verifications     P0=[0, 0]  P1=[0, 0]
+  role_permissions             P0=[45, 2766436568]  P1=[45, 2766436568]
+  roles                        P0=[6, 2463888430]  P1=[6, 2463888430]
+  schema_migrations            P0=[9, 55849301]  P1=[9, 55849301]
+  staff                        P0=[15, 527031276]  P1=[15, 527031276]
+  staff_workflow_assignments   P0=[15, 2098799082]  P1=[15, 2098799082]
+  students                     P0=[102, 1190811347]  P1=[102, 1190811347]
+  user_roles                   P0=[117, 3290168075]  P1=[117, 3290168075]
+  users                        P0=[117, 3169617878]  P1=[117, 3169617878]
+  workflow_levels              P0=[4, 493828631]  P1=[4, 493828631]
+AUTO_INCREMENT P0: {'complaints': 203, 'complaint_assignments': 257, 'staff_workflow_assignments': 16, 'account_activations': 1}
+AUTO_INCREMENT P1: {'complaints': 203, 'complaint_assignments': 257, 'staff_workflow_assignments': 16, 'account_activations': 1}
+routines  identical to P0: True (count 17)
+triggers  identical to P0: True (count 4)
+views     identical to P0: True (count 4)
+ledger    identical to P0: True (count 9)
+ledger all SUCCESS: True

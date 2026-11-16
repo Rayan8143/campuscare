@@ -1,0 +1,74 @@
+[OK] admin baseline checkpoint: admin_pre_stage2_20261115_235001.sql (71156 bytes)
+[Preflight] Target identity
+  [OK] DATABASE(): college_complaints_v2_dev
+  [OK] CURRENT_USER(): complaint_migrator_v2_dev@localhost
+  [OK] server version: 8.0.46
+  [OK] protected database visible to migrator: 0
+  [OK] target schema default collation: utf8mb4_unicode_ci
+  [OK] migrator grants match the allowlist (explicit schema privileges, optional SET_USER_ID; no ALL, DELETE, FILE, PROCESS, SUPER, SYSTEM_USER, GRANT OPTION or other schemas)
+
+=== [008] 008_triggers_and_procedures.sql (sql) sha256=d6917f3cdd9c4402...
+  [OK] migrator holds temporary SET_USER_ID
+  [OK] forensic checkpoint backups\stage2\forensic_checkpoint_pre_008_20261116_001227.sql (145265 bytes; not a recovery image)
+  mysql output:
+    Note (Code 1305): PROCEDURE college_complaints_v2_dev.update_complaint_status does not exist
+    Note (Code 1305): PROCEDURE college_complaints_v2_dev.transition_complaint_status does not exist
+    Note (Code 1305): PROCEDURE college_complaints_v2_dev.reassign_complaint does not exist
+    Note (Code 1305): PROCEDURE college_complaints_v2_dev.transfer_primary_officer does not exist
+    Note (Code 1305): PROCEDURE college_complaints_v2_dev.escalate_complaint does not exist
+    Note (Code 1305): PROCEDURE college_complaints_v2_dev.soft_delete_complaint does not exist
+    Note (Code 1305): PROCEDURE college_complaints_v2_dev.issue_account_token does not exist
+    Note (Code 1305): PROCEDURE college_complaints_v2_dev.issue_account_token_operator does not exist
+    Note (Code 1305): PROCEDURE college_complaints_v2_dev.redeem_account_token does not exist
+    Note (Code 1305): PROCEDURE college_complaints_v2_dev.submit_complaint does not exist
+    Note (Code 1305): PROCEDURE college_complaints_v2_dev.update_complaint_details does not exist
+    Note (Code 1305): PROCEDURE college_complaints_v2_dev.request_escalation does not exist
+    Note (Code 1305): PROCEDURE college_complaints_v2_dev.cc_auth_has_permission does not exist
+    Note (Code 1305): PROCEDURE college_complaints_v2_dev.cc_auth_is_primary_officer does not exist
+    Note (Code 1305): PROCEDURE college_complaints_v2_dev.cc_auth_department_authority does not exist
+    Note (Code 1305): PROCEDURE college_complaints_v2_dev.cc_auth_staff_eligible does not exist
+    Note (Code 1305): PROCEDURE college_complaints_v2_dev.cc_auth_is_assigned_staff does not exist
+    Note (Code 1305): PROCEDURE college_complaints_v2_dev.cc_token_issue_core does not exist
+    Note (Code 1360): Trigger does not exist
+    Note (Code 1360): Trigger does not exist
+    Note (Code 1360): Trigger does not exist
+    Note (Code 1360): Trigger does not exist
+    Note (Code 1360): Trigger does not exist
+  [OK] routines: ['cc_auth_department_authority', 'cc_auth_has_permission', 'cc_auth_is_assigned_staff', 'cc_auth_is_primary_officer', 'cc_auth_staff_eligible', 'cc_token_issue_core', 'escalate_complaint', 'issue_account_token', 'issue_account_token_operator', 'reassign_complaint', 'redeem_account_token', 'request_escalation', 'soft_delete_complaint', 'submit_complaint', 'transfer_primary_officer', 'transition_complaint_status', 'update_complaint_details']
+  [OK] routines not owned by the restricted definer: []
+  [OK] triggers: ['trg_complaint_status_history', 'trg_guard_complaint_sensitive_update', 'trg_validate_complaint_identity_insert', 'trg_validate_complaint_identity_update']
+  [OK] triggers not owned by the trigger definer: []
+  [OK] status-history triggers on complaints: 1
+  [OK] legacy update_complaint_status present: 0
+  [OK] views: ['complaint_details', 'department_complaint_summary', 'open_complaints', 'pending_complaints']
+  [OK] views not SQL SECURITY INVOKER: []
+  [OK] 008_triggers_and_procedures.sql applied in 134 ms
+[Postflight] Full Stage 2 assertions
+  [OK] base table count: 22
+  [OK] base tables: ['academic_departments', 'account_activations', 'complaint_assignments', 'complaint_escalations', 'complaint_history', 'complaints', 'departments', 'external_complainants', 'notifications', 'permissions', 'primary_officer_assignment', 'primary_officer_history', 'resolution_verifications', 'role_permissions', 'roles', 'schema_migrations', 'staff', 'staff_workflow_assignments', 'students', 'user_roles', 'users', 'workflow_levels']
+  [OK] academic_departments rows preserved: 10
+  [OK] departments rows preserved: 5
+  [OK] staff rows preserved: 15
+  [OK] students rows preserved: 102
+  [OK] complaints rows preserved: 202
+  [OK] complaint_history rows preserved: 155
+  [OK] users: 117
+  [OK] active users (none until activation): 0
+  [OK] unlinked students: 0
+  [OK] unlinked staff: 0
+  [OK] complaints without complainant: 0
+  [OK] active assignments: 200
+  [OK] unassigned complaints: 2
+  [OK] legacy assignments with an actor: 0
+  [OK] cache/ledger mismatches: 0
+  [OK] legacy history rows without actor: 155
+  [OK] routines: ['cc_auth_department_authority', 'cc_auth_has_permission', 'cc_auth_is_assigned_staff', 'cc_auth_is_primary_officer', 'cc_auth_staff_eligible', 'cc_token_issue_core', 'escalate_complaint', 'issue_account_token', 'issue_account_token_operator', 'reassign_complaint', 'redeem_account_token', 'request_escalation', 'soft_delete_complaint', 'submit_complaint', 'transfer_primary_officer', 'transition_complaint_status', 'update_complaint_details']
+  [OK] routines not owned by the restricted definer: []
+  [OK] triggers: ['trg_complaint_status_history', 'trg_guard_complaint_sensitive_update', 'trg_validate_complaint_identity_insert', 'trg_validate_complaint_identity_update']
+  [OK] triggers not owned by the trigger definer: []
+  [OK] status-history triggers on complaints: 1
+  [OK] legacy update_complaint_status present: 0
+  [OK] views: ['complaint_details', 'department_complaint_summary', 'open_complaints', 'pending_complaints']
+  [OK] views not SQL SECURITY INVOKER: []
+
+STAGE 2 MIGRATIONS APPLIED AND VERIFIED. Next: migrations/admin/S2_B_post_migration_grants.sql

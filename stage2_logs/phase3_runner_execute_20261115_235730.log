@@ -1,0 +1,133 @@
+[OK] admin baseline checkpoint: admin_pre_stage2_20261115_235001.sql (71156 bytes)
+[Preflight] Target identity
+  [OK] DATABASE(): college_complaints_v2_dev
+  [OK] CURRENT_USER(): complaint_migrator_v2_dev@localhost
+  [OK] server version: 8.0.46
+  [OK] protected database visible to migrator: 0
+  [OK] target schema default collation: utf8mb4_unicode_ci
+  [OK] migrator grants match the allowlist (explicit schema privileges, optional SET_USER_ID; no ALL, DELETE, FILE, PROCESS, SUPER, SYSTEM_USER, GRANT OPTION or other schemas)
+[Preflight] Stage 1 baseline (nothing applied yet)
+  [OK] academic_departments rows: 10
+  [OK] departments rows: 5
+  [OK] staff rows: 15
+  [OK] students rows: 102
+  [OK] complaints rows: 202
+  [OK] complaint_history rows: 155
+  [OK] assigned complaints: 200
+  [OK] unassigned complaints: 2
+  [OK] assignments to non-existent staff: 0
+  [OK] legacy FK complaint_history_ibfk_1 delete rule: CASCADE
+  [OK] legacy trigger present: 1
+  [OK] Stage 2 tables already present: []
+
+=== [000] 000_schema_migrations.sql (sql) sha256=d17f81bbf4dc17f0...
+  [OK] forensic checkpoint backups\stage2\forensic_checkpoint_pre_000_20261115_235730.sql (68743 bytes; not a recovery image)
+  [OK] 000: 1 table(s) present
+  [OK] 000_schema_migrations.sql applied in 76 ms
+
+=== [001] 001_core_rbac_schema.sql (sql) sha256=621021243d68d023...
+  [OK] forensic checkpoint backups\stage2\forensic_checkpoint_pre_001_20261115_235730.sql (70123 bytes; not a recovery image)
+  [OK] 001: 7 table(s) present
+  [OK] 001_core_rbac_schema.sql applied in 225 ms
+
+=== [002] 002_rbac_initial_seeds.sql (sql) sha256=b0ca74994bf005ef...
+  [OK] roles before 002: 0
+  [OK] permissions before 002: 0
+  [OK] forensic checkpoint backups\stage2\forensic_checkpoint_pre_002_20261115_235731.sql (78182 bytes; not a recovery image)
+  mysql output:
+    Warning (Code 1287): 'VALUES function' is deprecated and will be removed in a future release. Please use an alias (INSERT INTO ... VALUES (...) AS alias) and replace VALUES(col) in the ON DUPLICATE KEY UPDATE clause with alias.col instead
+    Warning (Code 1287): 'VALUES function' is deprecated and will be removed in a future release. Please use an alias (INSERT INTO ... VALUES (...) AS alias) and replace VALUES(col) in the ON DUPLICATE KEY UPDATE clause with alias.col instead
+    Warning (Code 1287): 'VALUES function' is deprecated and will be removed in a future release. Please use an alias (INSERT INTO ... VALUES (...) AS alias) and replace VALUES(col) in the ON DUPLICATE KEY UPDATE clause with alias.col instead
+    Warning (Code 1287): 'VALUES function' is deprecated and will be removed in a future release. Please use an alias (INSERT INTO ... VALUES (...) AS alias) and replace VALUES(col) in the ON DUPLICATE KEY UPDATE clause with alias.col instead
+    Warning (Code 1287): 'VALUES function' is deprecated and will be removed in a future release. Please use an alias (INSERT INTO ... VALUES (...) AS alias) and replace VALUES(col) in the ON DUPLICATE KEY UPDATE clause with alias.col instead
+  [OK] roles: 6
+  [OK] permissions: 27
+  [OK] SYSTEM_ADMIN holds complaint:verify_resolution: 0
+  [OK] 002_rbac_initial_seeds.sql applied in 52 ms
+
+=== [003] 003_workflow_and_singleton.sql (sql) sha256=bbf369a21db7673c...
+  [OK] forensic checkpoint backups\stage2\forensic_checkpoint_pre_003_20261115_235731.sql (82025 bytes; not a recovery image)
+  mysql output:
+    Warning (Code 1287): 'VALUES function' is deprecated and will be removed in a future release. Please use an alias (INSERT INTO ... VALUES (...) AS alias) and replace VALUES(col) in the ON DUPLICATE KEY UPDATE clause with alias.col instead
+    Warning (Code 1287): 'VALUES function' is deprecated and will be removed in a future release. Please use an alias (INSERT INTO ... VALUES (...) AS alias) and replace VALUES(col) in the ON DUPLICATE KEY UPDATE clause with alias.col instead
+    Warning (Code 1287): 'VALUES function' is deprecated and will be removed in a future release. Please use an alias (INSERT INTO ... VALUES (...) AS alias) and replace VALUES(col) in the ON DUPLICATE KEY UPDATE clause with alias.col instead
+  [OK] 003: 4 table(s) present
+  [OK] workflow_levels: 4
+  [OK] primary_officer_assignment rows (empty until bootstrap): 0
+  [OK] 003_workflow_and_singleton.sql applied in 164 ms
+
+=== [004] 004_assignment_and_audit.sql (sql) sha256=86f49119137ca91e...
+  [OK] forensic checkpoint backups\stage2\forensic_checkpoint_pre_004_20261115_235732.sql (88413 bytes; not a recovery image)
+  [OK] 004: 4 table(s) present
+  [OK] 004_assignment_and_audit.sql applied in 210 ms
+
+=== [005] 005_alter_existing_tables.sql (sql) sha256=65a14a313e68b602...
+  [OK] complaint_history_ibfk_1 delete rule: CASCADE
+  [OK] FKs on complaints.student_id: ['complaints_ibfk_1']
+  [OK] student_id FK rules incompatible with the new CHECK: []
+  [OK] forensic checkpoint backups\stage2\forensic_checkpoint_pre_005_20261115_235732.sql (96187 bytes; not a recovery image)
+  [OK] 005: 15 new columns present
+  [OK] complaint_history_ibfk_1 removed: None
+  [OK] fk_complaint_history_complaint delete rule: RESTRICT
+  [OK] complaint_history.new_status length: 40
+  [OK] complaint_history rows unchanged: 155
+  [OK] 005_alter_existing_tables.sql applied in 264 ms
+
+=== [006] 006_data_backfill_and_sync.py (py) sha256=c248b69088c9722f...
+  [OK] forensic checkpoint backups\stage2\forensic_checkpoint_pre_006_20261115_235733.sql (107842 bytes; not a recovery image)
+[006] Starting transactional DML backfill
+  [OK] users rows before backfill: 0
+  [OK] students already linked: 0
+  [OK] staff already linked: 0
+  [OK] complaint_assignments rows before backfill: 0
+  [OK] students: 102
+  [OK] staff: 15
+  [OK] complaints: 202
+  [OK] complaints without student_id: 0
+  [OK] student/staff e-mail collision check: 0
+  [OK] provisioned 102 student users (inactive, no password)
+  [OK] provisioned 15 staff users (VERIFIED legacy staff, login inactive, Level 1 membership)
+  [i] No activation tokens are created here; use cli_activation.py on demand.
+  [OK] complainant_user_id set on 202 complaints
+  [OK] imported 200 legacy active assignments (assigned_by_user_id = NULL)
+  [OK] users: 117
+  [OK] active users: 0
+  [OK] users with a password hash: 0
+  [OK] user_roles: 117
+  [OK] staff_workflow_assignments: 15
+  [OK] unlinked students: 0
+  [OK] unlinked staff: 0
+  [OK] complaints with NULL complainant_user_id: 0
+  [OK] complainant/student mismatches: 0
+  [OK] active ledger assignments: 200
+  [OK] unassigned complaints: 2
+  [OK] cache/ledger mismatches: 0
+  [OK] ledger rows with an invented actor: 0
+  [OK] transaction committed
+  [OK] 006_data_backfill_and_sync.py applied in 150 ms
+
+=== [007] 007_enforce_complainant_not_null.sql (sql) sha256=4fd5b54cb52911fa...
+  [OK] complaints.complainant_user_id nullable before 007: YES
+  [OK] forensic checkpoint backups\stage2\forensic_checkpoint_pre_007_20261115_235733.sql (153658 bytes; not a recovery image)
+  mysql output:
+    Note (Code 1305): PROCEDURE college_complaints_v2_dev.tmp_assert_complainant_integrity does not exist
+  [OK] complaints.complainant_user_id nullable: NO
+  [OK] 007_enforce_complainant_not_null.sql applied in 128 ms
+
+=== [008] 008_triggers_and_procedures.sql (sql) sha256=d6917f3cdd9c4402...
+  [OK] migrator holds temporary SET_USER_ID
+  [OK] forensic checkpoint backups\stage2\forensic_checkpoint_pre_008_20261115_235733.sql (153834 bytes; not a recovery image)
+  mysql output:
+    Error (Code 1227): Access denied; you need (at least one of) the SYSTEM_USER privilege(s) for this operation
+    Warning (Code 1405): Failed to revoke all privileges to dropped routine
+
+[X] MIGRATION FAILED: 008_triggers_and_procedures.sql: mysql client error: ERROR 1227 (42000) at line 57: Access denied; you need (at least one of) the SYSTEM_USER privilege(s) for this operation
+
+STOP. Do not retry (except 008, which is re-runnable after the cause is fixed).
+FULL RECOVERY uses the ADMIN BASELINE BACKUP passed via --baseline-checkpoint:
+  backups\stage2\admin_pre_stage2_20261115_235001.sql
+  -> admin: drop + recreate college_complaints_v2_dev, restore that dump, re-run from 000
+     (STAGE2_EXECUTION_GUIDE.md, section 'Recovery').
+FORENSIC CHECKPOINT ONLY (not a recovery image: no stored routines):
+  backups\stage2\forensic_checkpoint_pre_008_20261115_235733.sql
+  -> use it to inspect the state immediately before this step; do not restore it as a full recovery.

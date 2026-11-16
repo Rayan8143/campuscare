@@ -1,0 +1,236 @@
+{
+ "tables": {
+  "academic_departments": [
+   10,
+   1154636698
+  ],
+  "account_activations": [
+   0,
+   0
+  ],
+  "complaint_assignments": [
+   200,
+   3638430215
+  ],
+  "complaint_escalations": [
+   0,
+   0
+  ],
+  "complaint_history": [
+   155,
+   864112168
+  ],
+  "complaints": [
+   202,
+   2272471601
+  ],
+  "departments": [
+   5,
+   671411380
+  ],
+  "external_complainants": [
+   0,
+   0
+  ],
+  "notifications": [
+   0,
+   0
+  ],
+  "permissions": [
+   27,
+   3120442168
+  ],
+  "primary_officer_assignment": [
+   0,
+   0
+  ],
+  "primary_officer_history": [
+   0,
+   0
+  ],
+  "resolution_verifications": [
+   0,
+   0
+  ],
+  "role_permissions": [
+   45,
+   2766436568
+  ],
+  "roles": [
+   6,
+   2463888430
+  ],
+  "schema_migrations": [
+   9,
+   55849301
+  ],
+  "staff": [
+   15,
+   527031276
+  ],
+  "staff_workflow_assignments": [
+   15,
+   2098799082
+  ],
+  "students": [
+   102,
+   1190811347
+  ],
+  "user_roles": [
+   117,
+   3290168075
+  ],
+  "users": [
+   117,
+   3169617878
+  ],
+  "workflow_levels": [
+   4,
+   493828631
+  ]
+ },
+ "routines": [
+  [
+   "cc_auth_department_authority",
+   "cc_v2_dev_routine_definer@localhost"
+  ],
+  [
+   "cc_auth_has_permission",
+   "cc_v2_dev_routine_definer@localhost"
+  ],
+  [
+   "cc_auth_is_assigned_staff",
+   "cc_v2_dev_routine_definer@localhost"
+  ],
+  [
+   "cc_auth_is_primary_officer",
+   "cc_v2_dev_routine_definer@localhost"
+  ],
+  [
+   "cc_auth_staff_eligible",
+   "cc_v2_dev_routine_definer@localhost"
+  ],
+  [
+   "cc_token_issue_core",
+   "cc_v2_dev_routine_definer@localhost"
+  ],
+  [
+   "escalate_complaint",
+   "cc_v2_dev_routine_definer@localhost"
+  ],
+  [
+   "issue_account_token",
+   "cc_v2_dev_routine_definer@localhost"
+  ],
+  [
+   "issue_account_token_operator",
+   "cc_v2_dev_routine_definer@localhost"
+  ],
+  [
+   "reassign_complaint",
+   "cc_v2_dev_routine_definer@localhost"
+  ],
+  [
+   "redeem_account_token",
+   "cc_v2_dev_routine_definer@localhost"
+  ],
+  [
+   "request_escalation",
+   "cc_v2_dev_routine_definer@localhost"
+  ],
+  [
+   "soft_delete_complaint",
+   "cc_v2_dev_routine_definer@localhost"
+  ],
+  [
+   "submit_complaint",
+   "cc_v2_dev_routine_definer@localhost"
+  ],
+  [
+   "transfer_primary_officer",
+   "cc_v2_dev_routine_definer@localhost"
+  ],
+  [
+   "transition_complaint_status",
+   "cc_v2_dev_routine_definer@localhost"
+  ],
+  [
+   "update_complaint_details",
+   "cc_v2_dev_routine_definer@localhost"
+  ]
+ ],
+ "triggers": [
+  [
+   "trg_complaint_status_history",
+   "cc_v2_dev_trigger_definer@localhost"
+  ],
+  [
+   "trg_guard_complaint_sensitive_update",
+   "cc_v2_dev_trigger_definer@localhost"
+  ],
+  [
+   "trg_validate_complaint_identity_insert",
+   "cc_v2_dev_trigger_definer@localhost"
+  ],
+  [
+   "trg_validate_complaint_identity_update",
+   "cc_v2_dev_trigger_definer@localhost"
+  ]
+ ],
+ "views": [
+  [
+   "complaint_details",
+   "complaint_migrator_v2_dev@localhost"
+  ],
+  [
+   "department_complaint_summary",
+   "complaint_migrator_v2_dev@localhost"
+  ],
+  [
+   "open_complaints",
+   "complaint_migrator_v2_dev@localhost"
+  ],
+  [
+   "pending_complaints",
+   "complaint_migrator_v2_dev@localhost"
+  ]
+ ],
+ "ledger": [
+  [
+   "000",
+   "SUCCESS"
+  ],
+  [
+   "001",
+   "SUCCESS"
+  ],
+  [
+   "002",
+   "SUCCESS"
+  ],
+  [
+   "003",
+   "SUCCESS"
+  ],
+  [
+   "004",
+   "SUCCESS"
+  ],
+  [
+   "005",
+   "SUCCESS"
+  ],
+  [
+   "006",
+   "SUCCESS"
+  ],
+  [
+   "007",
+   "SUCCESS"
+  ],
+  [
+   "008",
+   "SUCCESS"
+  ]
+ ]
+}

@@ -1,0 +1,12 @@
+tables same set: True 22
+tables with changed rows/checksum: []
+  complaints             rows=202 checksum_same=True
+  complaint_history      rows=155 checksum_same=True
+  students               rows=102 checksum_same=True
+  staff                  rows=15 checksum_same=True
+  users                  rows=117 checksum_same=True
+  complaint_assignments  rows=200 checksum_same=True
+routines after: []
+triggers after: []
+views after: []
+ledger unchanged: True ['008', 'FAILED']

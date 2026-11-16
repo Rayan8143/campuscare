@@ -1,0 +1,116 @@
+# Phase 4 - S2_B execution + read-only verification (transcribed from terminal tabs c4 and c5,
+# 2026-11-16; the mysql --tee file was empty). No secrets appear in this output.
+
+## S2_B (tab c4): file sha256 ac97c399270bf8d3a92f676bfb05fcf45af1ecfa5d2b53b20538a098a7bec460
+All 86 GRANT/REVOKE statements echoed by mysql --verbose with no error and no warning, ending with:
+  REVOKE SET_USER_ID ON *.* FROM 'complaint_migrator_v2_dev'@'localhost'
+The only error in the session came AFTER S2_B completed, from the operator command line
+(chained "source" in -e), not from S2_B:
+  ERROR 1064 (42000) at line 1: ... near 'source stage2_logs/S2_B_verify_readonly.sql'
+
+### SHOW GRANTS FOR 'complaint_app_v2_dev'@'localhost'
+GRANT USAGE ON *.* TO `complaint_app_v2_dev`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`academic_departments` TO `complaint_app_v2_dev`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`complaint_assignments` TO `complaint_app_v2_dev`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`complaint_details` TO `complaint_app_v2_dev`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`complaint_escalations` TO `complaint_app_v2_dev`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`complaint_history` TO `complaint_app_v2_dev`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`complaints` TO `complaint_app_v2_dev`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`department_complaint_summary` TO `complaint_app_v2_dev`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`departments` TO `complaint_app_v2_dev`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`external_complainants` TO `complaint_app_v2_dev`@`localhost`
+GRANT SELECT, INSERT (`complaint_id`, `message`, `title`, `user_id`), UPDATE (`is_read`) ON `college_complaints_v2_dev`.`notifications` TO `complaint_app_v2_dev`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`open_complaints` TO `complaint_app_v2_dev`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`pending_complaints` TO `complaint_app_v2_dev`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`permissions` TO `complaint_app_v2_dev`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`primary_officer_assignment` TO `complaint_app_v2_dev`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`primary_officer_history` TO `complaint_app_v2_dev`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`resolution_verifications` TO `complaint_app_v2_dev`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`role_permissions` TO `complaint_app_v2_dev`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`roles` TO `complaint_app_v2_dev`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`staff_workflow_assignments` TO `complaint_app_v2_dev`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`staff` TO `complaint_app_v2_dev`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`students` TO `complaint_app_v2_dev`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`user_roles` TO `complaint_app_v2_dev`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`users` TO `complaint_app_v2_dev`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`workflow_levels` TO `complaint_app_v2_dev`@`localhost`
+GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`escalate_complaint` TO `complaint_app_v2_dev`@`localhost`
+GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`issue_account_token` TO `complaint_app_v2_dev`@`localhost`
+GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`reassign_complaint` TO `complaint_app_v2_dev`@`localhost`
+GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`redeem_account_token` TO `complaint_app_v2_dev`@`localhost`
+GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`request_escalation` TO `complaint_app_v2_dev`@`localhost`
+GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`soft_delete_complaint` TO `complaint_app_v2_dev`@`localhost`
+GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`submit_complaint` TO `complaint_app_v2_dev`@`localhost`
+GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`transfer_primary_officer` TO `complaint_app_v2_dev`@`localhost`
+GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`transition_complaint_status` TO `complaint_app_v2_dev`@`localhost`
+GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`update_complaint_details` TO `complaint_app_v2_dev`@`localhost`
+
+### SHOW GRANTS FOR 'complaint_migrator_v2_dev'@'localhost'
+GRANT USAGE ON *.* TO `complaint_migrator_v2_dev`@`localhost`
+GRANT SELECT, INSERT, UPDATE, CREATE, DROP, REFERENCES, INDEX, ALTER, EXECUTE, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, TRIGGER ON `college_complaints_v2_dev`.* TO `complaint_migrator_v2_dev`@`localhost`
+
+### SHOW GRANTS FOR 'cc_v2_dev_routine_definer'@'localhost'
+GRANT USAGE ON *.* TO `cc_v2_dev_routine_definer`@`localhost`
+GRANT LOCK TABLES ON `college_complaints_v2_dev`.* TO `cc_v2_dev_routine_definer`@`localhost`
+GRANT SELECT, INSERT, UPDATE (`revoked_at`, `used_at`) ON `college_complaints_v2_dev`.`account_activations` TO `cc_v2_dev_routine_definer`@`localhost`
+GRANT SELECT, INSERT, UPDATE (`is_active`, `unassigned_at`, `unassigned_by_user_id`) ON `college_complaints_v2_dev`.`complaint_assignments` TO `cc_v2_dev_routine_definer`@`localhost`
+GRANT INSERT ON `college_complaints_v2_dev`.`complaint_escalations` TO `cc_v2_dev_routine_definer`@`localhost`
+GRANT INSERT ON `college_complaints_v2_dev`.`complaint_history` TO `cc_v2_dev_routine_definer`@`localhost`
+GRANT SELECT, INSERT (`category`, `complainant_user_id`, `department_id`, `description`, `external_id`, `priority`, `student_id`, `title`), UPDATE (`assigned_staff_id`, `category`, `current_level_id`, `deleted_at`, `deleted_by_user_id`, `department_id`, `description`, `is_deleted`, `priority`, `resolved_at`, `status`, `title`) ON `college_complaints_v2_dev`.`complaints` TO `cc_v2_dev_routine_definer`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`departments` TO `cc_v2_dev_routine_definer`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`external_complainants` TO `cc_v2_dev_routine_definer`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`permissions` TO `cc_v2_dev_routine_definer`@`localhost`
+GRANT SELECT, INSERT, UPDATE (`assigned_at`, `assigned_by_user_id`, `previous_officer_user_id`, `transition_reason`, `user_id`) ON `college_complaints_v2_dev`.`primary_officer_assignment` TO `cc_v2_dev_routine_definer`@`localhost`
+GRANT INSERT ON `college_complaints_v2_dev`.`primary_officer_history` TO `cc_v2_dev_routine_definer`@`localhost`
+GRANT SELECT, INSERT, UPDATE (`decision`, `officer_remarks`, `officer_user_id`, `reviewed_at`) ON `college_complaints_v2_dev`.`resolution_verifications` TO `cc_v2_dev_routine_definer`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`role_permissions` TO `cc_v2_dev_routine_definer`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`roles` TO `cc_v2_dev_routine_definer`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`staff_workflow_assignments` TO `cc_v2_dev_routine_definer`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`staff` TO `cc_v2_dev_routine_definer`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`students` TO `cc_v2_dev_routine_definer`@`localhost`
+GRANT SELECT, INSERT, UPDATE (`assigned_at`, `is_active`) ON `college_complaints_v2_dev`.`user_roles` TO `cc_v2_dev_routine_definer`@`localhost`
+GRANT SELECT, UPDATE (`is_active`, `password_hash`) ON `college_complaints_v2_dev`.`users` TO `cc_v2_dev_routine_definer`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`workflow_levels` TO `cc_v2_dev_routine_definer`@`localhost`
+GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`cc_auth_department_authority` TO `cc_v2_dev_routine_definer`@`localhost`
+GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`cc_auth_has_permission` TO `cc_v2_dev_routine_definer`@`localhost`
+GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`cc_auth_is_assigned_staff` TO `cc_v2_dev_routine_definer`@`localhost`
+GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`cc_auth_is_primary_officer` TO `cc_v2_dev_routine_definer`@`localhost`
+GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`cc_auth_staff_eligible` TO `cc_v2_dev_routine_definer`@`localhost`
+GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`cc_token_issue_core` TO `cc_v2_dev_routine_definer`@`localhost`
+
+### SHOW GRANTS FOR 'cc_v2_dev_trigger_definer'@'localhost'
+GRANT USAGE ON *.* TO `cc_v2_dev_trigger_definer`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`complaint_assignments` TO `cc_v2_dev_trigger_definer`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`complaint_escalations` TO `cc_v2_dev_trigger_definer`@`localhost`
+GRANT INSERT ON `college_complaints_v2_dev`.`complaint_history` TO `cc_v2_dev_trigger_definer`@`localhost`
+GRANT SELECT, TRIGGER ON `college_complaints_v2_dev`.`complaints` TO `cc_v2_dev_trigger_definer`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`external_complainants` TO `cc_v2_dev_trigger_definer`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`students` TO `cc_v2_dev_trigger_definer`@`localhost`
+
+### SHOW GRANTS FOR 'cc_v2_dev_activation_cli'@'localhost'
+GRANT USAGE ON *.* TO `cc_v2_dev_activation_cli`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`roles` TO `cc_v2_dev_activation_cli`@`localhost`
+GRANT SELECT ON `college_complaints_v2_dev`.`user_roles` TO `cc_v2_dev_activation_cli`@`localhost`
+GRANT SELECT (`email`, `full_name`, `is_active`, `user_id`) ON `college_complaints_v2_dev`.`users` TO `cc_v2_dev_activation_cli`@`localhost`
+GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`issue_account_token_operator` TO `cc_v2_dev_activation_cli`@`localhost`
+GRANT EXECUTE ON PROCEDURE `college_complaints_v2_dev`.`redeem_account_token` TO `cc_v2_dev_activation_cli`@`localhost`
+
+## Read-only verification (tab c5): stage2_logs/S2_B_verify_readonly.sql
+V1  cc_v2_dev_activation_cli   localhost locked=Y caching_sha2_password  no password set
+    cc_v2_dev_routine_definer  localhost locked=Y caching_sha2_password  no password set
+    cc_v2_dev_trigger_definer  localhost locked=Y caching_sha2_password  no password set
+    complaint_app_v2_dev       localhost locked=N caching_sha2_password  password set (hidden)
+    complaint_migrator_v2_dev  localhost locked=N caching_sha2_password  password set (hidden)
+V1b CREATE USER `cc_v2_dev_routine_definer`@`localhost` IDENTIFIED WITH 'caching_sha2_password' REQUIRE NONE PASSWORD EXPIRE DEFAULT ACCOUNT LOCK PASSWORD HISTORY DEFAULT PASSWORD REUSE INTERVAL DEFAULT PASSWORD REQUIRE CURRENT DEFAULT
+    CREATE USER `cc_v2_dev_trigger_definer`@`localhost` IDENTIFIED WITH 'caching_sha2_password' REQUIRE NONE PASSWORD EXPIRE DEFAULT ACCOUNT LOCK PASSWORD HISTORY DEFAULT PASSWORD REUSE INTERVAL DEFAULT PASSWORD REQUIRE CURRENT DEFAULT
+V2  privilege rows on college_complaints (mysql.db/tables_priv/columns_priv/procs_priv): 0 rows
+V3  runtime on complaints: tables_priv Table_priv=Select, Column_priv=(empty); columns_priv: 0 rows
+V4  runtime EXECUTE: escalate_complaint, issue_account_token, reassign_complaint, redeem_account_token,
+    request_escalation, soft_delete_complaint, submit_complaint, transfer_primary_officer,
+    transition_complaint_status, update_complaint_details (10)
+V5  mysql.global_grants for the five accounts: 0 rows (SET_USER_ID gone)
+V6  schema-level grants: cc_v2_dev_routine_definer -> college_complaints_v2_dev (LOCK TABLES);
+    complaint_migrator_v2_dev -> college_complaints_v2_dev (14 privileges). No other schema.
+
+## Data check (migrator snapshots before/after S2_B)
+22 tables: row counts and CHECKSUM TABLE identical; routines/triggers/views and ledger identical.

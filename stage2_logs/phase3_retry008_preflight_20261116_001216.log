@@ -1,0 +1,10 @@
+[Preflight] Target identity
+  [OK] DATABASE(): college_complaints_v2_dev
+  [OK] CURRENT_USER(): complaint_migrator_v2_dev@localhost
+  [OK] server version: 8.0.46
+  [OK] protected database visible to migrator: 0
+  [OK] target schema default collation: utf8mb4_unicode_ci
+  [OK] migrator grants match the allowlist (explicit schema privileges, optional SET_USER_ID; no ALL, DELETE, FILE, PROCESS, SUPER, SYSTEM_USER, GRANT OPTION or other schemas)
+[Preflight] ledger: 9 row(s); pending: ['008']
+[Preflight] SET_USER_ID held: yes (required before 008)
+[Preflight] read-only checks complete; nothing was modified.

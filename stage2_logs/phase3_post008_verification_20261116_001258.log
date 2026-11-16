@@ -1,0 +1,81 @@
+# Post-008 verification 2026-11-16T00:12:58
+DATABASE()=college_complaints_v2_dev  CURRENT_USER()=complaint_migrator_v2_dev@localhost
+
+## Ledger
+  ('000', '000_schema_migrations.sql', 'SUCCESS', datetime.datetime(2026, 11, 15, 23, 57, 30))
+  ('001', '001_core_rbac_schema.sql', 'SUCCESS', datetime.datetime(2026, 11, 15, 23, 57, 31))
+  ('002', '002_rbac_initial_seeds.sql', 'SUCCESS', datetime.datetime(2026, 11, 15, 23, 57, 31))
+  ('003', '003_workflow_and_singleton.sql', 'SUCCESS', datetime.datetime(2026, 11, 15, 23, 57, 32))
+  ('004', '004_assignment_and_audit.sql', 'SUCCESS', datetime.datetime(2026, 11, 15, 23, 57, 32))
+  ('005', '005_alter_existing_tables.sql', 'SUCCESS', datetime.datetime(2026, 11, 15, 23, 57, 33))
+  ('006', '006_data_backfill_and_sync.py', 'SUCCESS', datetime.datetime(2026, 11, 15, 23, 57, 33))
+  ('007', '007_enforce_complainant_not_null.sql', 'SUCCESS', datetime.datetime(2026, 11, 15, 23, 57, 33))
+  ('008', '008_triggers_and_procedures.sql', 'SUCCESS', datetime.datetime(2026, 11, 16, 0, 12, 27))
+
+## Routines (definer / security / type)
+  ('cc_auth_department_authority', 'cc_v2_dev_routine_definer@localhost', 'DEFINER', 'PROCEDURE', 'READS SQL DATA')
+  ('cc_auth_has_permission', 'cc_v2_dev_routine_definer@localhost', 'DEFINER', 'PROCEDURE', 'READS SQL DATA')
+  ('cc_auth_is_assigned_staff', 'cc_v2_dev_routine_definer@localhost', 'DEFINER', 'PROCEDURE', 'READS SQL DATA')
+  ('cc_auth_is_primary_officer', 'cc_v2_dev_routine_definer@localhost', 'DEFINER', 'PROCEDURE', 'READS SQL DATA')
+  ('cc_auth_staff_eligible', 'cc_v2_dev_routine_definer@localhost', 'DEFINER', 'PROCEDURE', 'READS SQL DATA')
+  ('cc_token_issue_core', 'cc_v2_dev_routine_definer@localhost', 'DEFINER', 'PROCEDURE', 'MODIFIES SQL DATA')
+  ('escalate_complaint', 'cc_v2_dev_routine_definer@localhost', 'DEFINER', 'PROCEDURE', 'MODIFIES SQL DATA')
+  ('issue_account_token', 'cc_v2_dev_routine_definer@localhost', 'DEFINER', 'PROCEDURE', 'MODIFIES SQL DATA')
+  ('issue_account_token_operator', 'cc_v2_dev_routine_definer@localhost', 'DEFINER', 'PROCEDURE', 'MODIFIES SQL DATA')
+  ('reassign_complaint', 'cc_v2_dev_routine_definer@localhost', 'DEFINER', 'PROCEDURE', 'MODIFIES SQL DATA')
+  ('redeem_account_token', 'cc_v2_dev_routine_definer@localhost', 'DEFINER', 'PROCEDURE', 'MODIFIES SQL DATA')
+  ('request_escalation', 'cc_v2_dev_routine_definer@localhost', 'DEFINER', 'PROCEDURE', 'MODIFIES SQL DATA')
+  ('soft_delete_complaint', 'cc_v2_dev_routine_definer@localhost', 'DEFINER', 'PROCEDURE', 'MODIFIES SQL DATA')
+  ('submit_complaint', 'cc_v2_dev_routine_definer@localhost', 'DEFINER', 'PROCEDURE', 'MODIFIES SQL DATA')
+  ('transfer_primary_officer', 'cc_v2_dev_routine_definer@localhost', 'DEFINER', 'PROCEDURE', 'MODIFIES SQL DATA')
+  ('transition_complaint_status', 'cc_v2_dev_routine_definer@localhost', 'DEFINER', 'PROCEDURE', 'MODIFIES SQL DATA')
+  ('update_complaint_details', 'cc_v2_dev_routine_definer@localhost', 'DEFINER', 'PROCEDURE', 'MODIFIES SQL DATA')
+
+## Triggers
+  ('trg_complaint_status_history', 'AFTER', 'UPDATE', 'complaints', 'cc_v2_dev_trigger_definer@localhost')
+  ('trg_guard_complaint_sensitive_update', 'BEFORE', 'UPDATE', 'complaints', 'cc_v2_dev_trigger_definer@localhost')
+  ('trg_validate_complaint_identity_insert', 'BEFORE', 'INSERT', 'complaints', 'cc_v2_dev_trigger_definer@localhost')
+  ('trg_validate_complaint_identity_update', 'BEFORE', 'UPDATE', 'complaints', 'cc_v2_dev_trigger_definer@localhost')
+
+## Views (definition + execution)
+  complaint_details              security=INVOKER  definer=complaint_migrator_v2_dev@localhost      SELECT OK rows=202
+  department_complaint_summary   security=INVOKER  definer=complaint_migrator_v2_dev@localhost      SELECT OK rows=5
+  open_complaints                security=INVOKER  definer=complaint_migrator_v2_dev@localhost      SELECT OK rows=113
+  pending_complaints             security=INVOKER  definer=complaint_migrator_v2_dev@localhost      SELECT OK rows=113
+  department_complaint_summary sample: [('Hostel Office', 39, Decimal('13'), Decimal('23')), ('Housekeeping', 40, Decimal('14'), Decimal('22')), ('IT Support', 41, Decimal('15'), Decimal('22')), ('Laboratory', 41, Decimal('16'), Decimal('22')), ('Maintenance', 41, Decimal('14'), Decimal('24'))]
+
+## SHOW GRANTS (migrator; other accounts need admin -> shown by S2_B)
+  GRANT USAGE ON *.* TO `complaint_migrator_v2_dev`@`localhost`
+  GRANT SET_USER_ID ON *.* TO `complaint_migrator_v2_dev`@`localhost`
+  GRANT SELECT, INSERT, UPDATE, CREATE, DROP, REFERENCES, INDEX, ALTER, EXECUTE, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, TRIGGER ON `college_complaints_v2_dev`.* TO `complaint_migrator_v2_dev`@`localhost`
+
+## Table integrity
+  academic_departments         rows=10
+  account_activations          rows=0
+  complaint_assignments        rows=200
+  complaint_escalations        rows=0
+  complaint_history            rows=155
+  complaints                   rows=202
+  departments                  rows=5
+  external_complainants        rows=0
+  notifications                rows=0
+  permissions                  rows=27
+  primary_officer_assignment   rows=0
+  primary_officer_history      rows=0
+  resolution_verifications     rows=0
+  role_permissions             rows=45
+  roles                        rows=6
+  schema_migrations            rows=9
+  staff                        rows=15
+  staff_workflow_assignments   rows=15
+  students                     rows=102
+  user_roles                   rows=117
+  users                        rows=117
+  workflow_levels              rows=4
+  tables whose rows/checksum changed since the post-S2_A2 snapshot (expected: none - 008 is DDL only): ['schema_migrations']
+  status distribution: [('Submitted', 53), ('In Progress', 60), ('Resolved', 72), ('Rejected', 17)]
+
+## History-trigger probe (ROLLED BACK): one status transition -> exactly one history row
+  probe did not complete: errno=1142 sqlstate=42000 msg=TRIGGER command denied to user 'cc_v2_dev_trigger_definer'@'localhost' for table 'complaints'
+  RESULT: NOT TESTED (see message)
+  after ROLLBACK: complaint 2 status=Submitted, total history rows=155 (expected Submitted / 155)

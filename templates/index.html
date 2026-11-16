@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CampusCare | Complaint Management</title><link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}"></head>
+<body><header><div class="logo">CC</div><div><h1>CampusCare</h1><p>College Complaint Management System</p></div><span class="tag">Demo Admin Dashboard</span></header>
+<main><section class="hero"><div><p class="eyebrow">CAMPUS SERVICES</p><h2>Complaints, organised.</h2><p>Register issues, track progress and improve campus services.</p></div><a class="button" href="#new">+ New complaint</a></section>
+<section class="stats"><article><span>Total complaints</span><strong>{{ total }}</strong></article><article><span>Open complaints</span><strong>{{ opened }}</strong></article><article><span>Resolved</span><strong>{{ resolved }}</strong></article></section>
+{% with messages=get_flashed_messages(with_categories=true) %}{% for category,message in messages %}<div class="message {{ category }}">{{ message }}</div>{% endfor %}{% endwith %}
+<section class="panel" id="new"><p class="eyebrow">SUBMIT AN ISSUE</p><h2>New complaint</h2>
+<form action="/complaints" method="post" class="grid">
+<label>Student name<input name="student_name" required></label><label>Student email<input type="email" name="email" required></label>
+<label>Student department<select name="academic_department_id" required><option value="">Choose your academic department</option>{% for a in academic_departments %}<option value="{{ a.academic_department_id }}">{{ a.department_name }}</option>{% endfor %}</select></label>
+<label>Responsible department<select name="department_id" required><option value="">Choose department</option>{% for d in departments %}<option value="{{ d.department_id }}">{{ d.department_name }}</option>{% endfor %}</select></label>
+<label>Category<select name="category">{% for v in ['Infrastructure','Hostel','Laboratory','Network','Cleanliness','Other'] %}<option>{{ v }}</option>{% endfor %}</select></label>
+<label>Priority<select name="priority"><option>Low</option><option selected>Medium</option><option>High</option></select></label>
+<label class="wide">Title<input name="title" maxlength="150" required></label><label class="wide">Description<textarea name="description" rows="3" required></textarea></label>
+<div class="wide"><button>Submit complaint</button></div></form></section>
+<section class="panel"><div class="heading"><div><p class="eyebrow">RECORDS</p><h2>All complaints</h2></div><input id="search" placeholder="Search complaints…"></div>
+<div class="scroll"><table id="table"><thead><tr><th>ID</th><th>Complaint</th><th>Student</th><th>Department</th><th>Priority</th><th>Status</th><th>Update</th></tr></thead><tbody>
+{% for c in complaints %}<tr><td>#{{ c.complaint_id }}</td><td><b>{{ c.title }}</b><small>{{ c.category }} · {{ c.created_at }}</small></td><td>{{ c.student_name }}</td><td>{{ c.department_name }}</td><td><span class="pill">{{ c.priority }}</span></td><td><span class="pill status">{{ c.status }}</span></td><td><form action="/complaints/{{ c.complaint_id }}/status" method="post" class="statusform"><select name="status">{% for v in ['Submitted','In Progress','Resolved','Rejected'] %}<option {% if c.status==v %}selected{% endif %}>{{ v }}</option>{% endfor %}</select><button class="small">Save</button></form></td></tr>
+{% else %}<tr><td colspan="7">No complaints yet.</td></tr>{% endfor %}</tbody></table></div><p class="note">Classroom prototype only: no login or role-based access control is implemented.</p></section></main>
+<script>document.getElementById('search').addEventListener('input',e=>{const q=e.target.value.toLowerCase();document.querySelectorAll('#table tbody tr').forEach(r=>r.hidden=!r.innerText.toLowerCase().includes(q));});</script></body></html>

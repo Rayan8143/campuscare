@@ -1,0 +1,268 @@
+{
+ "tables": {
+  "academic_departments": [
+   10,
+   1154636698
+  ],
+  "account_activations": [
+   0,
+   0
+  ],
+  "complaint_assignments": [
+   200,
+   3638430215
+  ],
+  "complaint_escalations": [
+   0,
+   0
+  ],
+  "complaint_history": [
+   155,
+   864112168
+  ],
+  "complaints": [
+   202,
+   2272471601
+  ],
+  "departments": [
+   5,
+   671411380
+  ],
+  "external_complainants": [
+   0,
+   0
+  ],
+  "notifications": [
+   0,
+   0
+  ],
+  "permissions": [
+   27,
+   3120442168
+  ],
+  "primary_officer_assignment": [
+   0,
+   0
+  ],
+  "primary_officer_history": [
+   0,
+   0
+  ],
+  "resolution_verifications": [
+   0,
+   0
+  ],
+  "role_permissions": [
+   45,
+   2766436568
+  ],
+  "roles": [
+   6,
+   2463888430
+  ],
+  "schema_migrations": [
+   9,
+   55849301
+  ],
+  "staff": [
+   15,
+   527031276
+  ],
+  "staff_workflow_assignments": [
+   15,
+   2098799082
+  ],
+  "students": [
+   102,
+   1190811347
+  ],
+  "user_roles": [
+   117,
+   3290168075
+  ],
+  "users": [
+   117,
+   3169617878
+  ],
+  "workflow_levels": [
+   4,
+   493828631
+  ]
+ },
+ "auto_increment": {
+  "complaints": 203,
+  "complaint_assignments": 256,
+  "staff_workflow_assignments": 16,
+  "account_activations": 1
+ },
+ "routines": [
+  [
+   "cc_auth_department_authority",
+   "cc_v2_dev_routine_definer@localhost",
+   "DEFINER"
+  ],
+  [
+   "cc_auth_has_permission",
+   "cc_v2_dev_routine_definer@localhost",
+   "DEFINER"
+  ],
+  [
+   "cc_auth_is_assigned_staff",
+   "cc_v2_dev_routine_definer@localhost",
+   "DEFINER"
+  ],
+  [
+   "cc_auth_is_primary_officer",
+   "cc_v2_dev_routine_definer@localhost",
+   "DEFINER"
+  ],
+  [
+   "cc_auth_staff_eligible",
+   "cc_v2_dev_routine_definer@localhost",
+   "DEFINER"
+  ],
+  [
+   "cc_token_issue_core",
+   "cc_v2_dev_routine_definer@localhost",
+   "DEFINER"
+  ],
+  [
+   "escalate_complaint",
+   "cc_v2_dev_routine_definer@localhost",
+   "DEFINER"
+  ],
+  [
+   "issue_account_token",
+   "cc_v2_dev_routine_definer@localhost",
+   "DEFINER"
+  ],
+  [
+   "issue_account_token_operator",
+   "cc_v2_dev_routine_definer@localhost",
+   "DEFINER"
+  ],
+  [
+   "reassign_complaint",
+   "cc_v2_dev_routine_definer@localhost",
+   "DEFINER"
+  ],
+  [
+   "redeem_account_token",
+   "cc_v2_dev_routine_definer@localhost",
+   "DEFINER"
+  ],
+  [
+   "request_escalation",
+   "cc_v2_dev_routine_definer@localhost",
+   "DEFINER"
+  ],
+  [
+   "soft_delete_complaint",
+   "cc_v2_dev_routine_definer@localhost",
+   "DEFINER"
+  ],
+  [
+   "submit_complaint",
+   "cc_v2_dev_routine_definer@localhost",
+   "DEFINER"
+  ],
+  [
+   "transfer_primary_officer",
+   "cc_v2_dev_routine_definer@localhost",
+   "DEFINER"
+  ],
+  [
+   "transition_complaint_status",
+   "cc_v2_dev_routine_definer@localhost",
+   "DEFINER"
+  ],
+  [
+   "update_complaint_details",
+   "cc_v2_dev_routine_definer@localhost",
+   "DEFINER"
+  ]
+ ],
+ "triggers": [
+  [
+   "trg_complaint_status_history",
+   "cc_v2_dev_trigger_definer@localhost"
+  ],
+  [
+   "trg_guard_complaint_sensitive_update",
+   "cc_v2_dev_trigger_definer@localhost"
+  ],
+  [
+   "trg_validate_complaint_identity_insert",
+   "cc_v2_dev_trigger_definer@localhost"
+  ],
+  [
+   "trg_validate_complaint_identity_update",
+   "cc_v2_dev_trigger_definer@localhost"
+  ]
+ ],
+ "views": [
+  [
+   "complaint_details",
+   "INVOKER"
+  ],
+  [
+   "department_complaint_summary",
+   "INVOKER"
+  ],
+  [
+   "open_complaints",
+   "INVOKER"
+  ],
+  [
+   "pending_complaints",
+   "INVOKER"
+  ]
+ ],
+ "ledger": [
+  [
+   "000",
+   "SUCCESS",
+   "d17f81bbf4dc17f00c72f4f0a56cb2175f0b7745262f7c0a88ad4d34dd92e2b0"
+  ],
+  [
+   "001",
+   "SUCCESS",
+   "621021243d68d0239229bc9833d13b0f9a3f6b3a85bbf6d6886edf4d1f2bb1fc"
+  ],
+  [
+   "002",
+   "SUCCESS",
+   "b0ca74994bf005eff76256c3c30aa7ce7b605fe9479116c85df914f06462be05"
+  ],
+  [
+   "003",
+   "SUCCESS",
+   "bbf369a21db7673cd26c0f3129a2432c37182f14eadbc86231b2fb140060a761"
+  ],
+  [
+   "004",
+   "SUCCESS",
+   "86f49119137ca91ec4c649d3ce85b3b43c276b78922f36184c2438b56a54e2ee"
+  ],
+  [
+   "005",
+   "SUCCESS",
+   "65a14a313e68b602134d738b7f06fb59a98dee8324122361091dc12e4d53f59b"
+  ],
+  [
+   "006",
+   "SUCCESS",
+   "c248b69088c9722f394efb20b4fea7203abed5ca8688a46652774ce9ffcef41b"
+  ],
+  [
+   "007",
+   "SUCCESS",
+   "4fd5b54cb52911fa32331a5c8d0e2f736ad4ee70842085bb88cf2653c09207d5"
+  ],
+  [
+   "008",
+   "SUCCESS",
+   "d6917f3cdd9c4402231d117470147882d7c77e3bcc6a3c94aad2c415b2ff42f0"
+  ]
+ ]
+}

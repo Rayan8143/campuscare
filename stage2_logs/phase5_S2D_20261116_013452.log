@@ -1,0 +1,200 @@
+[1-2] integrity + environment OK (canonical c3d82dd23f39f54b..., run copy 7a3c1f0fc9845c09...)
+[3a] CURRENT_USER()=complaint_migrator_v2_dev@localhost DATABASE()=college_complaints_v2_dev
+[3b] grant: GRANT USAGE ON *.* TO `complaint_migrator_v2_dev`@`localhost`
+[3b] grant: GRANT SELECT, INSERT, UPDATE, CREATE, DROP, REFERENCES, INDEX, ALTER, EXECUTE, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, TRIGGER ON `college_complaints_v2_dev`.* TO `complaint_migrator_v2_dev`@`localhost`
+[3c] engine complaints                   InnoDB
+[3c] engine complaint_assignments        InnoDB
+[3c] engine primary_officer_assignment   InnoDB
+[3c] engine staff_workflow_assignments   InnoDB
+[3c] engine users                        InnoDB
+[3c] engine account_activations          InnoDB
+[3c] engine complaint_history            InnoDB
+[3d] fixtures: {'probe_cid': 2, 'probe_assigned': 1, 'probe_staff': 1, 'probe_user': 1, 'probe_student': 1, 'probe_dept': 1, 'probe_student_user': 1, 'probe_other_user': 117}
+[3d] OK   complaint exists, Submitted, not archived, Level 1
+[3d] OK   assigned complaint matches its active ledger row
+[3d] OK   staff fixture exists
+[3d] OK   student and complainant user correspond
+[3d] OK   alternate complainant valid and distinct
+[3d] OK   D13 user inactive with NULL password_hash
+[3d] OK   department fixture exists
+[3d] OK   workflow level 4 exists (D12 FK)
+[3d] OK   no singleton_id 2 row (D11)
+[3d] OK   no Level 4 membership for D12 tuple
+[3d] OK   D06 target has exactly one active assignment
+[3e] SET SESSION autocommit = 0 verified
+[5] mysql.exe --defaults-extra-file=<temp> --skip-reconnect --force --table --show-warnings --default-character-set=utf8mb4 --database=college_complaints_v2_dev < S2_D_run_copy.sql
+[5] client exit code: 0; timed out: False
+--- client stdout ---
++--------------+-------------------------------------+---------------------------+-------------+------+---------------+-----------+----------------+-------------+------------+---------------+--------------------+------------------+------------+
+| marker       | current_user_                       | database_                 | autocommit_ | gate | connection_id | probe_cid | probe_assigned | probe_staff | probe_user | probe_student | probe_student_user | probe_other_user | probe_dept |
++--------------+-------------------------------------+---------------------------+-------------+------+---------------+-----------+----------------+-------------+------------+---------------+--------------------+------------------+------------+
+| S2D_PRECHECK | complaint_migrator_v2_dev@localhost | college_complaints_v2_dev |           0 |    1 |            57 |         2 |              1 |           1 |          1 |             1 |                  1 |              117 |          1 |
++--------------+-------------------------------------+---------------------------+-------------+------+---------------+-----------+----------------+-------------+------------+---------------+--------------------+------------------+------------+
++--------------------+------+----------+-------+---------+------------+----------+------+--------+---------------+-------------+
+| marker             | cid  | assigned | staff | student | other_user | d13_user | dept | level4 | officer2_rows | swa_l4_rows |
++--------------------+------+----------+-------+---------+------------+----------+------+--------+---------------+-------------+
+| S2D_FIXTURE_CHECKS |    1 |        1 |     1 |       1 |          1 |        1 |    1 |      1 |             0 |           0 |
++--------------------+------+----------+-------+---------+------------+----------+------+--------+---------------+-------------+
++-------------------+------------+---------+-------------+-------+--------------+------+-------------+--------------+
+| marker            | complaints | history | assignments | users | active_users | swa  | activations | officer_rows |
++-------------------+------------+---------+-------------+-------+--------------+------+-------------+--------------+
+| S2D_COUNTS_BEFORE |        202 |     155 |         200 |   117 |            0 |   15 |           0 |            0 |
++-------------------+------------+---------+-------------+-------+--------------+------+-------------+--------------+
++---------------------------------------------------------+
+| probe                                                   |
++---------------------------------------------------------+
+| P1 expect ERROR 1142 (migrator has no DELETE privilege) |
++---------------------------------------------------------+
++-----------------------------------------------------------------------------------+
+| probe                                                                             |
++-----------------------------------------------------------------------------------+
+| P2 expect ERROR 1044 or 1142 (protected database not accessible; read-only probe) |
++-----------------------------------------------------------------------------------+
++-------------------------------------------------------------------------------------------+
+| probe                                                                                     |
++-------------------------------------------------------------------------------------------+
+| D01 expect ERROR 1644 "Direct UPDATE of complaints.status is prohibited" (accident guard) |
++-------------------------------------------------------------------------------------------+
++----------------------------------------------------------------------------+
+| probe                                                                      |
++----------------------------------------------------------------------------+
+| D02 expect ERROR 1644 (assigned_staff_id must match the active ledger row) |
++----------------------------------------------------------------------------+
++---------------------------------------------------------------------------+
+| probe                                                                     |
++---------------------------------------------------------------------------+
+| D03 expect ERROR 1644 (current_level_id must match the escalation ledger) |
++---------------------------------------------------------------------------+
++---------------------------------------------------------------+
+| probe                                                         |
++---------------------------------------------------------------+
+| D04 expect ERROR 1644 (complainant_user_id cannot be altered) |
++---------------------------------------------------------------+
++----------------------------------------------------------------------------+
+| probe                                                                      |
++----------------------------------------------------------------------------+
+| D05 expect ERROR 1644 (archiving requires deleted_by_user_id / deleted_at) |
++----------------------------------------------------------------------------+
++---------------------------------------------------------------------------------+
+| probe                                                                           |
++---------------------------------------------------------------------------------+
+| D06 expect ERROR 1062 on uq_single_active_assignment (second active assignment) |
++---------------------------------------------------------------------------------+
++----------------------------------------------------------------------------------+
+| probe                                                                            |
++----------------------------------------------------------------------------------+
+| D07 expect ERROR 3819 chk_assignment_actor_required (WORKFLOW row without actor) |
++----------------------------------------------------------------------------------+
++---------------------------------------------------------------------------+
+| probe                                                                     |
++---------------------------------------------------------------------------+
+| D08 expect ERROR 1644 (student_id does not belong to complainant_user_id) |
++---------------------------------------------------------------------------+
++------------------------------------------------------------+
+| probe                                                      |
++------------------------------------------------------------+
+| D09 expect ERROR 1644 (complainant_user_id cannot be null) |
++------------------------------------------------------------+
++------------------------------------------------------------------------------------+
+| probe                                                                              |
++------------------------------------------------------------------------------------+
+| D10 expect ERROR 1644 (new complaints must start Submitted / unassigned / Level 1) |
++------------------------------------------------------------------------------------+
++------------------------------------------------+
+| probe                                          |
++------------------------------------------------+
+| D11 expect ERROR 3819 chk_singleton_single_row |
++------------------------------------------------+
++----------------------------------------------------------------------------------+
+| probe                                                                            |
++----------------------------------------------------------------------------------+
+| D12 expect ERROR 3819 chk_swa_level_not_officer_tier (Level 4 is singleton-only) |
++----------------------------------------------------------------------------------+
++--------------------------------------------------------------------------------------------------+
+| probe                                                                                            |
++--------------------------------------------------------------------------------------------------+
+| D13 expect ERROR 3819 chk_users_active_requires_password (inactive user with NULL password_hash) |
++--------------------------------------------------------------------------------------------------+
++-------------------------------------------------------------------------------------------+
+| probe                                                                                     |
++-------------------------------------------------------------------------------------------+
+| D14 expect ERROR 3819 chk_activation_token_hash_hex (token hash must be 64 lowercase hex) |
++-------------------------------------------------------------------------------------------+
++-------------------+------------------+
+| marker            | autocommit_after |
++-------------------+------------------+
+| S2D_ROLLBACK_DONE |                0 |
++-------------------+------------------+
++------------------+------------+---------+-------------+-------+--------------+------+-------------+--------------+
+| marker           | complaints | history | assignments | users | active_users | swa  | activations | officer_rows |
++------------------+------------+---------+-------------+-------+--------------+------+-------------+--------------+
+| S2D_COUNTS_AFTER |        202 |     155 |         200 |   117 |            0 |   15 |           0 |            0 |
++------------------+------------+---------+-------------+-------+--------------+------+-------------+--------------+
++---------+
+| marker  |
++---------+
+| S2D_END |
++---------+
+
+--- client stderr ---
+ERROR 1142 (42000) at line 85: DELETE command denied to user 'complaint_migrator_v2_dev'@'localhost' for table 'complaints'
+ERROR 1142 (42000) at line 88: SELECT command denied to user 'complaint_migrator_v2_dev'@'localhost' for table 'complaints'
+ERROR 1644 (45000) at line 95: Direct UPDATE of complaints.status is prohibited; call transition_complaint_status.
+ERROR 1644 (45000) at line 98: assigned_staff_id must match the active complaint_assignments row; use reassign_complaint.
+ERROR 1644 (45000) at line 101: current_level_id must match the latest complaint_escalations row; use escalate_complaint.
+ERROR 1644 (45000) at line 104: Security Violation: complainant_user_id cannot be altered.
+ERROR 1644 (45000) at line 107: Archiving requires deleted_by_user_id and deleted_at; use soft_delete_complaint.
+ERROR 1062 (23000) at line 110: Duplicate entry '1' for key 'complaint_assignments.uq_single_active_assignment'
+ERROR 3819 (HY000) at line 114: Check constraint 'chk_assignment_actor_required' is violated.
+ERROR 1644 (45000) at line 118: Integrity Error: student_id does not belong to complainant_user_id.
+ERROR 1644 (45000) at line 122: Integrity Error: complainant_user_id cannot be null.
+ERROR 1644 (45000) at line 126: New complaints must start Submitted, unassigned, at Level 1 and not archived.
+ERROR 3819 (HY000) at line 130: Check constraint 'chk_singleton_single_row' is violated.
+ERROR 3819 (HY000) at line 134: Check constraint 'chk_swa_level_not_officer_tier' is violated.
+ERROR 3819 (HY000) at line 138: Check constraint 'chk_users_active_requires_password' is violated.
+ERROR 3819 (HY000) at line 141: Check constraint 'chk_activation_token_hash_hex' is violated.
+
+[6] captured client CONNECTION_ID: 57
+[6] client server connection 57 has left PROCESSLIST
+[6] NOWAIT locking reads on probe rows succeeded: no transaction still holds them
+[7] in-session precheck: ['S2D_PRECHECK', 'complaint_migrator_v2_dev@localhost', 'college_complaints_v2_dev', '0', '1', '57', '2', '1', '1', '1', '1', '1', '117', '1']
+[7] in-session fixture checks: ['1', '1', '1', '1', '1', '1', '1', '1', '0', '0']
+[7] errors reported by client (16):
+     [01] ERROR 1142: DELETE command denied to user 'complaint_migrator_v2_dev'@'localhost' for table 'complaints'
+     [02] ERROR 1142: SELECT command denied to user 'complaint_migrator_v2_dev'@'localhost' for table 'complaints'
+     [03] ERROR 1644: Direct UPDATE of complaints.status is prohibited; call transition_complaint_status.
+     [04] ERROR 1644: assigned_staff_id must match the active complaint_assignments row; use reassign_complaint.
+     [05] ERROR 1644: current_level_id must match the latest complaint_escalations row; use escalate_complaint.
+     [06] ERROR 1644: Security Violation: complainant_user_id cannot be altered.
+     [07] ERROR 1644: Archiving requires deleted_by_user_id and deleted_at; use soft_delete_complaint.
+     [08] ERROR 1062: Duplicate entry '1' for key 'complaint_assignments.uq_single_active_assignment'
+     [09] ERROR 3819: Check constraint 'chk_assignment_actor_required' is violated.
+     [10] ERROR 1644: Integrity Error: student_id does not belong to complainant_user_id.
+     [11] ERROR 1644: Integrity Error: complainant_user_id cannot be null.
+     [12] ERROR 1644: New complaints must start Submitted, unassigned, at Level 1 and not archived.
+     [13] ERROR 3819: Check constraint 'chk_singleton_single_row' is violated.
+     [14] ERROR 3819: Check constraint 'chk_swa_level_not_officer_tier' is violated.
+     [15] ERROR 3819: Check constraint 'chk_users_active_requires_password' is violated.
+     [16] ERROR 3819: Check constraint 'chk_activation_token_hash_hex' is violated.
+     P1   expected [1142] actual 1142 -> PASS
+     P2   expected [1044, 1142] actual 1142 -> PASS
+     D01  expected [1644] actual 1644 -> PASS
+     D02  expected [1644] actual 1644 -> PASS
+     D03  expected [1644] actual 1644 -> PASS
+     D04  expected [1644] actual 1644 -> PASS
+     D05  expected [1644] actual 1644 -> PASS
+     D06  expected [1062] actual 1062 -> PASS
+     D07  expected [3819] actual 3819 -> PASS
+     D08  expected [1644] actual 1644 -> PASS
+     D09  expected [1048, 1644] actual 1644 -> PASS
+     D10  expected [1644] actual 1644 -> PASS
+     D11  expected [3819] actual 3819 -> PASS
+     D12  expected [3819] actual 3819 -> PASS
+     D13  expected [3819] actual 3819 -> PASS
+     D14  expected [3819] actual 3819 -> PASS
+[8] snapshot: 22 tables, changed=[]; routines/triggers/views/ledger unchanged=True
+[8] AUTO_INCREMENT complaints                   before=203 after=203 unchanged
+[8] AUTO_INCREMENT complaint_assignments        before=256 after=257 advanced (TEST RESIDUE: counter gap, not row data)
+[8] AUTO_INCREMENT staff_workflow_assignments   before=16 after=16 unchanged
+[8] AUTO_INCREMENT account_activations          before=1 after=1 unchanged
+S2_D RESULT: PASS

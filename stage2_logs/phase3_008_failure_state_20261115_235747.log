@@ -1,0 +1,6 @@
+routines: [('update_complaint_status', 'root@localhost')]
+triggers: [('trg_complaint_status_history', 'root@localhost')]
+views   : [('complaint_details', 'root@localhost', 'DEFINER'), ('department_complaint_summary', 'root@localhost', 'DEFINER'), ('open_complaints', 'root@localhost', 'DEFINER'), ('pending_complaints', 'root@localhost', 'DEFINER')]
+ledger  : [('000', 'SUCCESS'), ('001', 'SUCCESS'), ('002', 'SUCCESS'), ('003', 'SUCCESS'), ('004', 'SUCCESS'), ('005', 'SUCCESS'), ('006', 'SUCCESS'), ('007', 'SUCCESS'), ('008', 'FAILED')]
+counts  : [(202, 155, 117, 200)]
+grants  : ['GRANT USAGE ON *.* TO `complaint_migrator_v2_dev`@`localhost`', 'GRANT SET_USER_ID ON *.* TO `complaint_migrator_v2_dev`@`localhost`', 'GRANT SELECT, INSERT, UPDATE, CREATE, DROP, REFERENCES, INDEX, ALTER, EXECUTE, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, TRIGGER ON `college_complaints_v2_dev`.* TO `complaint_migrator_v2_dev`@`localhost`']

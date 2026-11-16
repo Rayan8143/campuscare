@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import stat, complaint_table, activity with context %}
+{% block title %}My work{% endblock %}
+{% block heading %}Good to see you, {{ identity.full_name.split(' ')[0] }}{% endblock %}
+{% block content %}
+<div class="cc-hero mb-4"><div style="position:relative;z-index:1">
+  <span class="cc-pill mb-2"><i data-lucide="briefcase" style="width:14px"></i>{{ identity.staff.designation ~ ' · ' if identity.staff.designation }}{{ identity.staff.department_name }}</span>
+  <h3 class="mb-1">Your investigation queue</h3>
+  <div class="small">Workflow memberships:
+    {% for m in identity.memberships %}{{ m.department_name }} – {{ m.level_name }}{% if m.can_resolve %} (resolve){% endif %}{% if m.can_escalate %} (escalate){% endif %}{{ ', ' if not loop.last }}{% else %}none{% endfor %}</div>
+</div></div>
+<div class="row g-3 mb-4">
+  {{ stat('Awaiting acceptance', counts['Submitted'] + counts['Escalated'], 'inbox', 'blue') }}
+  {{ stat('In progress', counts['In Progress'], 'wrench', 'azure') }}
+  {{ stat('Pending verification', counts['Resolution Pending Verification'], 'badge-check', 'purple') }}
+  {{ stat('Resolved', counts['Resolved'], 'check-circle-2', 'green', hint=('avg %s days'|format(avg_days)) if avg_days else None) }}
+</div>
+<div class="row g-3">
+  <div class="col-lg-8"><div class="card cc-card">
+    <div class="card-header"><h3 class="card-title">Assigned to me</h3>
+      <div class="card-actions"><a href="{{ url_for('complaints.index', scope='assigned') }}" class="btn btn-sm btn-ghost-primary">View all</a></div></div>
+    {{ complaint_table(queue, show_assignee=False, empty='No open work assigned to you.') }}
+  </div></div>
+  <div class="col-lg-4"><div class="card cc-card h-100"><div class="card-header"><h3 class="card-title">Recent activity</h3></div>
+    <div class="card-body">{{ activity(feed) }}</div></div></div>
+</div>
+{% endblock %}

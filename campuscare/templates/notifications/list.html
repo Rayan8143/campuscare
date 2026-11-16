@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Notifications{% endblock %}
+{% block heading %}Notifications{% endblock %}
+{% block actions %}{% if unread %}<form method="post" action="{{ url_for('notifications.mark_read') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<input type="hidden" name="notification_id" value="all"><button class="btn btn-outline-primary"><i data-lucide="check-check" class="me-2"></i>Mark all read</button></form>{% endif %}{% endblock %}
+{% block content %}
+<div class="card cc-card"><div class="list-group list-group-flush">
+{% for n in rows %}
+  <div class="list-group-item {{ '' if n.is_read else 'bg-blue-lt' }}"><div class="row align-items-center">
+    <div class="col-auto"><span class="cc-stat-icon bg-{{ 'secondary' if n.is_read else 'blue' }}-lt" style="width:36px;height:36px"><i data-lucide="bell"></i></span></div>
+    <div class="col"><div class="fw-medium">{{ n.title }}</div><div class="small text-secondary">{{ n.message }}</div><div class="small text-muted">{{ n.created_at|dt }}</div></div>
+    <div class="col-auto d-flex gap-2">
+      {% if n.complaint_id %}<a class="btn btn-sm btn-ghost-primary" href="{{ url_for('complaints.detail', cid=n.complaint_id) }}">Open</a>{% endif %}
+      {% if not n.is_read %}<form method="post" action="{{ url_for('notifications.mark_read') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="notification_id" value="{{ n.notification_id }}"><button class="btn btn-sm btn-ghost-secondary">Mark read</button></form>{% endif %}
+    </div></div></div>
+{% else %}
+  <div class="empty"><div class="empty-icon"><i data-lucide="bell-off"></i></div><p class="empty-subtitle text-secondary">You're all caught up.</p></div>
+{% endfor %}
+</div></div>
+{% endblock %}

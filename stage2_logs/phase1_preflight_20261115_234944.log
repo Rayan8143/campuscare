@@ -1,0 +1,46 @@
+# Phase 1 read-only preflight - 2026-11-15T23:49:43
+
+## MIGRATOR account
+server version : 8.0.46
+DATABASE()     : college_complaints_v2_dev
+CURRENT_USER() : complaint_migrator_v2_dev@localhost
+server host/port: LAPTOP-8NBG0GUS / 3306 (client connected to localhost)
+protected schema 'college_complaints' visible to this account: no
+SHOW GRANTS FOR CURRENT_USER():
+  GRANT USAGE ON *.* TO `complaint_migrator_v2_dev`@`localhost`
+  GRANT ALL PRIVILEGES ON `college_complaints_v2_dev`.* TO `complaint_migrator_v2_dev`@`localhost`
+
+## Schema state (migrator view)
+schema charset/collation: [('utf8mb4', 'utf8mb4_unicode_ci')]
+tables/views (10): [('academic_departments', 'BASE TABLE'), ('complaint_history', 'BASE TABLE'), ('complaints', 'BASE TABLE'), ('departments', 'BASE TABLE'), ('staff', 'BASE TABLE'), ('students', 'BASE TABLE'), ('complaint_details', 'VIEW'), ('department_complaint_summary', 'VIEW'), ('open_complaints', 'VIEW'), ('pending_complaints', 'VIEW')]
+count academic_departments  : 10
+count departments           : 5
+count staff                 : 15
+count students              : 102
+count complaints            : 202
+count complaint_history     : 155
+complaints assigned / unassigned: (Decimal('200'), Decimal('2'))
+assigned to missing staff: 0
+complaints with missing student: 0
+history rows with missing complaint: 0
+complaint statuses: [('Submitted', 53), ('In Progress', 60), ('Resolved', 72), ('Rejected', 17)]
+foreign keys (complaints, complaint_history):
+  ('complaint_history', 'complaint_history_ibfk_1', 'complaint_id', 'complaints', 'NO ACTION', 'CASCADE')
+  ('complaints', 'complaints_ibfk_1', 'student_id', 'students', 'NO ACTION', 'NO ACTION')
+  ('complaints', 'complaints_ibfk_2', 'department_id', 'departments', 'NO ACTION', 'NO ACTION')
+  ('complaints', 'complaints_ibfk_3', 'assigned_staff_id', 'staff', 'NO ACTION', 'NO ACTION')
+triggers: [('trg_complaint_status_history', 'UPDATE', 'AFTER', 'complaints', 'root@localhost')]
+routines: [('update_complaint_status', 'PROCEDURE', 'root@localhost', 'DEFINER')]
+views: [('complaint_details', 'root@localhost', 'DEFINER'), ('department_complaint_summary', 'root@localhost', 'DEFINER'), ('open_complaints', 'root@localhost', 'DEFINER'), ('pending_complaints', 'root@localhost', 'DEFINER')]
+@@log_bin=1  @@sql_mode=ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+@@automatic_sp_privileges=1
+
+## RUNTIME account
+server version : 8.0.46
+DATABASE()     : college_complaints_v2_dev
+CURRENT_USER() : complaint_app_v2_dev@localhost
+server host/port: LAPTOP-8NBG0GUS / 3306 (client connected to localhost)
+protected schema 'college_complaints' visible to this account: no
+SHOW GRANTS FOR CURRENT_USER():
+  GRANT USAGE ON *.* TO `complaint_app_v2_dev`@`localhost`
+  GRANT SELECT, INSERT, UPDATE, EXECUTE, SHOW VIEW ON `college_complaints_v2_dev`.* TO `complaint_app_v2_dev`@`localhost`

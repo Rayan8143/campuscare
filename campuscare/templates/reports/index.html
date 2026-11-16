@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% from "partials/macros.html" import stat, activity as act with context %}
+{% block title %}Reports{% endblock %}
+{% block heading %}{{ title }}{% endblock %}
+{% block actions %}<button class="btn btn-outline-secondary" onclick="window.print()"><i data-lucide="printer" class="me-2"></i>Print</button>{% endblock %}
+{% block content %}
+{% set total = counts.values()|sum %}
+<div class="row g-3 mb-3">
+  {{ stat('Total complaints', total, 'files', 'blue') }}
+  {{ stat('Resolved', counts['Resolved'], 'check-circle-2', 'green', hint=('%d%% of total'|format(counts['Resolved'] * 100 // total)) if total else None) }}
+  {{ stat('Open', counts['Submitted'] + counts['In Progress'] + counts['Escalated'] + counts['Resolution Pending Verification'], 'clock', 'orange') }}
+  {{ stat('Avg. days to resolve', avg_days if avg_days is not none else '—', 'timer', 'teal') }}
+</div>
+<div class="row g-3 mb-3">
+  <div class="col-lg-8"><div class="card cc-card h-100"><div class="card-header"><h3 class="card-title">12-month trend</h3></div><div class="card-body"><div class="chart-box"><canvas id="trend"></canvas></div></div></div></div>
+  <div class="col-lg-4"><div class="card cc-card h-100"><div class="card-header"><h3 class="card-title">By category</h3></div><div class="card-body"><div class="chart-box"><canvas id="cat"></canvas></div></div></div></div>
+</div>
+<div class="row g-3 mb-3">
+  <div class="col-lg-6"><div class="card cc-card h-100"><div class="card-header"><h3 class="card-title">Department summary</h3></div>
+    <div class="table-responsive"><table class="table card-table"><thead><tr><th>Department</th><th class="text-end">Total</th><th class="text-end">Resolved</th><th class="text-end">Pending</th></tr></thead><tbody>
+    {% for d in summary %}<tr><td>{{ d.department_name }}</td><td class="text-end">{{ d.total_complaints }}</td><td class="text-end">{{ d.resolved_complaints or 0 }}</td><td class="text-end">{{ d.pending_complaints or 0 }}</td></tr>{% endfor %}
+    </tbody></table></div></div></div>
+  <div class="col-lg-6"><div class="card cc-card h-100"><div class="card-header"><h3 class="card-title">Staff workload</h3></div>
+    <div class="table-responsive" style="max-height:340px"><table class="table card-table"><thead><tr><th>Staff</th><th>Department</th><th class="text-end">Open</th><th class="text-end">Resolved</th></tr></thead><tbody>
+    {% for w in workload %}<tr><td>{{ w.full_name }}</td><td>{{ w.department_name }}</td><td class="text-end">{{ w.open_n or 0 }}</td><td class="text-end">{{ w.resolved_n or 0 }}</td></tr>{% endfor %}
+    </tbody></table></div></div></div>
+</div>
+<div class="card cc-card"><div class="card-header"><h3 class="card-title">Activity log</h3></div><div class="card-body">{{ act(feed) }}</div></div>
+{% endblock %}
+{% block scripts %}
+{% include "partials/charts.html" %}
+<script>
+ccChart('trend', 'bar', {{ trend|map(attribute='ym')|list|tojson }}, [
+  {label: 'Filed', data: {{ trend|map(attribute='n')|list|tojson }}},
+  {label: 'Resolved', data: {{ trend|map(attribute='resolved')|map('int')|list|tojson }}}]);
+ccChart('cat', 'doughnut', {{ by_category|map(attribute='label')|list|tojson }}, [{data: {{ by_category|map(attribute='n')|list|tojson }}}]);
+</script>
+{% endblock %}
