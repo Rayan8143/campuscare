@@ -15,6 +15,7 @@ REQUIRED_DATABASE = "college_complaints_v2_dev"
 REQUIRED_DB_USER = "complaint_app_v2_dev"
 PROTECTED_DATABASE = "college_complaints"
 LOCAL_HOSTS = {"localhost", "127.0.0.1", "::1"}
+HOSTED_SUFFIX = ".aivencloud.com"
 
 
 class ConfigError(RuntimeError):
@@ -53,8 +54,13 @@ class Config:
             raise ConfigError(f"DB_NAME must be {REQUIRED_DATABASE}; refusing to start.")
         if db_user != REQUIRED_DB_USER:
             raise ConfigError(f"DB_USER must be {REQUIRED_DB_USER}; refusing to start.")
+        ssl_ca_b64 = os.environ.get("DB_SSL_CA", "")
         if db_host not in LOCAL_HOSTS:
-            raise ConfigError("DB_HOST must be a local address for the development sandbox.")
+            # Hosted deployment: only an Aiven MySQL host, and only over verified TLS.
+            if not db_host.endswith(HOSTED_SUFFIX):
+                raise ConfigError(f"A non-local DB_HOST must end with {HOSTED_SUFFIX}; refusing to start.")
+            if not ssl_ca_b64:
+                raise ConfigError("DB_SSL_CA (base64 CA certificate) is required for a hosted database.")
         if not os.environ.get("DB_PASSWORD"):
             raise ConfigError("DB_PASSWORD is not set.")
         if len(secret) < 16 or secret == "local-demo-key":
@@ -68,6 +74,8 @@ class Config:
             DB_NAME=db_name,
             DB_USER=db_user,
             DB_PASSWORD=os.environ["DB_PASSWORD"],
+            DB_SSL_CA_B64=ssl_ca_b64,
+            TRUST_PROXY=os.environ.get("TRUST_PROXY", "0") == "1",
             SESSION_COOKIE_HTTPONLY=True,
             SESSION_COOKIE_SAMESITE="Lax",
             SESSION_COOKIE_SECURE=secure_cookies,

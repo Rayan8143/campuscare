@@ -17,6 +17,9 @@ def create_app(config=None, verify_db=True):
     app = Flask(__name__)
     app.config.update(cfg.flask_mapping())
     app.config["CAMPUSCARE"] = cfg
+    if cfg.TRUST_PROXY:      # behind Render's proxy: real client IP and https scheme
+        from werkzeug.middleware.proxy_fix import ProxyFix
+        app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
     from . import logsafety
     logsafety.install()

@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: campuscare
+    runtime: python
+    region: singapore
+    plan: free
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --workers 1 --threads 4 --timeout 60 --access-logfile -
+    healthCheckPath: /login
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: FLASK_ENV
+        value: production
+      - key: SESSION_COOKIE_SECURE
+        value: "1"
+      - key: TRUST_PROXY
+        value: "1"
+      - key: DB_NAME
+        value: college_complaints_v2_dev
+      - key: DB_USER
+        value: complaint_app_v2_dev
+      - key: FLASK_SECRET_KEY
+        generateValue: true
+      # Entered in the Render dashboard (never committed):
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_SSL_CA
+        sync: false

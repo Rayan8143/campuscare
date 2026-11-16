@@ -37,18 +37,43 @@ class DataAccessError(Exception):
     """Any other database failure. Message is generic."""
 
 
+_ca_path = None
+
+
+def _ca_file(cfg):
+    """Write the base64 CA certificate to a private temp file once per process (hosted DB only)."""
+    global _ca_path
+    if _ca_path is None:
+        import base64
+        import os
+        import tempfile
+        fd, path = tempfile.mkstemp(prefix="cc_ca_", suffix=".pem")
+        with os.fdopen(fd, "wb") as fh:
+            fh.write(base64.b64decode(cfg.DB_SSL_CA_B64))
+        _ca_path = path
+    return _ca_path
+
+
+def _account_ok(account, hosted):
+    user, _, host = (account or "").partition("@")
+    # Local sandbox: the account must be bound to localhost. Hosted: Aiven reports the host part as '%'.
+    return user == REQUIRED_DB_USER and host == ("%" if hosted else "localhost")
+
+
 def _open():
     cfg = current_app.config["CAMPUSCARE"]
+    hosted = bool(cfg.DB_SSL_CA_B64)
+    tls = {"ssl_ca": _ca_file(cfg), "ssl_verify_cert": True, "ssl_verify_identity": True} if hosted else {}
     cnx = mysql.connector.connect(host=cfg.DB_HOST, port=cfg.DB_PORT, user=cfg.DB_USER, password=cfg.DB_PASSWORD,
                                   database=cfg.DB_NAME, autocommit=True, charset="utf8mb4",
-                                  collation="utf8mb4_unicode_ci", connection_timeout=10)
+                                  collation="utf8mb4_unicode_ci", connection_timeout=10, **tls)
     cur = cnx.cursor()
     try:
         cur.execute("SELECT DATABASE(), CURRENT_USER()")
         database, account = cur.fetchone()
     finally:
         cur.close()
-    if database != REQUIRED_DATABASE or account != f"{REQUIRED_DB_USER}@localhost":
+    if database != REQUIRED_DATABASE or not _account_ok(account, hosted):
         cnx.close()
         log.critical("connection guard rejected database=%s account=%s", database, account)
         raise DatabaseGuardError("Database connection guard failed.")
